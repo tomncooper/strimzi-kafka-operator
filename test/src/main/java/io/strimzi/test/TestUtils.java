@@ -70,7 +70,7 @@ public final class TestUtils {
 
     public static final String CRD_KAFKA_MIRROR_MAKER = "../install/cluster-operator/045-Crd-kafkamirrormaker.yaml";
 
-    private static final Pattern KAFKA_COMPONENT_PATTERN = Pattern.compile(":([^:]*?)-kafka-(?<version>[0-9.])");
+    private static final Pattern KAFKA_COMPONENT_PATTERN = Pattern.compile(":([^:]*?)_kafka_(?<version>[0-9.])");
     private static final Pattern VERSION_IMAGE_PATTERN = Pattern.compile("(?<version>[0-9.]+)=(?<image>[^\\s]*)");
 
     private TestUtils() {
@@ -152,7 +152,7 @@ public final class TestUtils {
         Matcher m = KAFKA_COMPONENT_PATTERN.matcher(image);
         StringBuffer sb = new StringBuffer();
         if (m.find()) {
-            m.appendReplacement(sb, ":" + newTag + "-kafka-" + m.group("version"));
+            m.appendReplacement(sb, ":" + newTag + "_kafka_" + m.group("version"));
             m.appendTail(sb);
             image = sb.toString();
         } else {
