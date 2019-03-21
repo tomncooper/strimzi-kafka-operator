@@ -23,7 +23,9 @@ import io.strimzi.api.kafka.model.KafkaBuilder;
 import io.strimzi.api.kafka.model.KafkaResources;
 import io.strimzi.api.kafka.model.TopicOperatorSpec;
 import io.strimzi.api.kafka.model.TopicOperatorSpecBuilder;
+import io.strimzi.operator.KubernetesVersion;
 import io.strimzi.operator.PlatformFeaturesAvailability;
+import io.strimzi.operator.cluster.ClusterOperator;
 import io.strimzi.operator.cluster.ResourceUtils;
 import io.strimzi.operator.cluster.model.Ca;
 import io.strimzi.operator.cluster.model.ClientsCa;
@@ -33,10 +35,10 @@ import io.strimzi.operator.cluster.model.KafkaCluster;
 import io.strimzi.operator.cluster.model.KafkaVersion;
 import io.strimzi.operator.cluster.model.TopicOperator;
 import io.strimzi.operator.cluster.model.ZookeeperCluster;
-import io.strimzi.operator.KubernetesVersion;
 import io.strimzi.operator.cluster.operator.resource.ResourceOperatorSupplier;
 import io.strimzi.operator.common.Reconciliation;
 import io.strimzi.operator.common.model.ResourceType;
+import io.strimzi.operator.common.operator.MockCertManager;
 import io.strimzi.operator.common.operator.resource.ReconcileResult;
 import io.strimzi.test.mockkube.MockKube;
 import io.vertx.core.AsyncResult;
@@ -106,13 +108,24 @@ public class MaintenanceTimeWindowsTest {
                 .build();
         this.mockClient.secrets().inNamespace(NAMESPACE).withName(KafkaResources.clusterCaCertificateSecretName(NAME)).create(this.clusterCaSecret);
         this.mockClient.secrets().inNamespace(NAMESPACE).withName(KafkaResources.clientsCaCertificateSecretName(NAME)).create(this.clientsCaSecret);
+        this.mockClient.secrets().inNamespace(NAMESPACE).withName(ClusterOperator.secretName(NAME)).create(new SecretBuilder()
+                .withNewMetadata()
+                .withNamespace(NAMESPACE)
+                .withName(ClusterOperator.secretName(NAME))
+                .endMetadata()
+                .addToData("cluster-operator.key", MockCertManager.clusterCaKey())
+                .addToData("cluster-operator.crt", MockCertManager.clusterCaCert())
+                .build());
 
         this.vertx = Vertx.vertx();
 
         PlatformFeaturesAvailability pfa = new PlatformFeaturesAvailability(false, KubernetesVersion.V1_9);
         // creating the Kafka operator
         ResourceOperatorSupplier ros =
-                new ResourceOperatorSupplier(this.vertx, this.mockClient, pfa, 60_000L);
+                new ResourceOperatorSupplier(this.vertx, this.mockClient,
+                        ResourceUtils.zookeeperLeaderFinder(this.vertx, this.mockClient),
+                        ResourceUtils.adminClientProvider(),
+                        pfa, 60_000L);
 
         KafkaAssemblyOperator kao = new KafkaAssemblyOperator(this.vertx, pfa, null, ros, ResourceUtils.dummyClusterOperatorConfig(VERSIONS, 2_000));
 

@@ -25,7 +25,6 @@ import io.strimzi.operator.cluster.model.ZookeeperCluster;
 import io.strimzi.operator.KubernetesVersion;
 import io.strimzi.operator.cluster.operator.resource.ResourceOperatorSupplier;
 import io.strimzi.operator.cluster.operator.resource.StatefulSetOperator;
-import io.strimzi.operator.cluster.operator.resource.ZookeeperLeaderFinder;
 import io.strimzi.operator.common.Reconciliation;
 import io.strimzi.operator.common.model.ResourceType;
 import io.strimzi.operator.common.operator.MockCertManager;
@@ -149,8 +148,10 @@ public class PartialRollingUpdateTest {
     }
 
     ResourceOperatorSupplier supplier(KubernetesClient bootstrapClient) {
-        ZookeeperLeaderFinder leaderFinder = ResourceUtils.zookeeperLeaderFinder(vertx, bootstrapClient);
-        return new ResourceOperatorSupplier(vertx, bootstrapClient, leaderFinder, new PlatformFeaturesAvailability(true, KubernetesVersion.V1_9), 60_000L);
+        return new ResourceOperatorSupplier(vertx, bootstrapClient,
+                ResourceUtils.zookeeperLeaderFinder(vertx, bootstrapClient),
+                ResourceUtils.adminClientProvider(),
+                new PlatformFeaturesAvailability(true, KubernetesVersion.V1_9), 60_000L);
     }
 
     private void startKube() {
