@@ -99,15 +99,26 @@ class KafkaST extends AbstractST {
     @OpenShiftOnly
     void testDeployKafkaClusterViaTemplate() {
         createCustomResources("../examples/templates/cluster-operator");
+        String appName = "strimzi-ephemeral";
         Oc oc = (Oc) KUBE_CLIENT;
         String clusterName = "openshift-my-cluster";
-        oc.newApp("strimzi-ephemeral", map("CLUSTER_NAME", clusterName));
+        oc.newApp(appName, map("CLUSTER_NAME", clusterName));
         oc.waitForStatefulSet(zookeeperClusterName(clusterName), 3);
         oc.waitForStatefulSet(kafkaClusterName(clusterName), 3);
         oc.waitForDeployment(entityOperatorDeploymentName(clusterName), 1);
 
         //Testing docker images
         testDockerImagesForKafkaCluster(clusterName, 3, 3, false);
+
+        //Testing labels
+        verifyLabelsOnCOPod(NAMESPACE);
+        verifyLabelsOnKafkaPods(NAMESPACE, clusterName, 3, appName);
+        verifyLabelsOnZkPods(NAMESPACE, clusterName, 3, appName);
+        verifyLabelsOnEOPod(NAMESPACE, clusterName, appName);
+        verifyLabelsForSecrets(NAMESPACE, clusterName, appName);
+        verifyLabelsForCRDs(NAMESPACE);
+        verifyLabelsForServices(NAMESPACE, clusterName, appName);
+        verifyLabelsForConfigMaps(NAMESPACE, clusterName, appName);
 
         LOGGER.info("Deleting Kafka cluster {} after test", clusterName);
         oc.deleteByName("Kafka", clusterName);
@@ -739,6 +750,10 @@ class KafkaST extends AbstractST {
         resources().topic(kafkaSourceName, topicSourceName).done();
         // Deploy Mirror Maker
         resources().kafkaMirrorMaker(CLUSTER_NAME, kafkaSourceName, kafkaTargetName, "my-group", 1, false).done();
+
+        verifyLabelsOnMMPods(NAMESPACE, CLUSTER_NAME, 1);
+        verifyLabelsForMMService(NAMESPACE, CLUSTER_NAME);
+        verifyLabelsForMMConfigMaps(NAMESPACE, CLUSTER_NAME);
 
         TimeMeasuringSystem.stopOperation(operationID);
         // Wait when Mirror Maker will join group
