@@ -756,6 +756,7 @@ class KafkaST extends AbstractST {
         verifyLabelsOnMMPods(NAMESPACE, CLUSTER_NAME, 1);
         verifyLabelsForMMService(NAMESPACE, CLUSTER_NAME);
         verifyLabelsForMMConfigMaps(NAMESPACE, CLUSTER_NAME);
+        verifyLabelsForMMServiceAccount(CLUSTER_NAME);
 
         TimeMeasuringSystem.stopOperation(operationID);
         // Wait when Mirror Maker will join group
