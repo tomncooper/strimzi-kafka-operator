@@ -111,16 +111,16 @@ class KafkaST extends AbstractST {
         testDockerImagesForKafkaCluster(clusterName, 3, 3, false);
 
         //Testing labels
+        verifyLabelsOnKafkaOrZkPods(NAMESPACE, clusterName, "zookeeper", 3, appName);
+        verifyLabelsOnKafkaOrZkPods(NAMESPACE, clusterName, "kafka", 3, appName);
         verifyLabelsOnCOPod(NAMESPACE);
-        verifyLabelsOnKafkaPods(NAMESPACE, clusterName, 3, appName);
-        verifyLabelsOnZkPods(NAMESPACE, clusterName, 3, appName);
-        verifyLabelsOnEOPod(NAMESPACE, clusterName, appName);
-        verifyLabelsForSecrets(NAMESPACE, clusterName, appName);
+        verifyLabelsOnPods(NAMESPACE, clusterName, "entity-operator", appName, "Kafka");
         verifyLabelsForCRDs(NAMESPACE);
-        verifyLabelsForServices(NAMESPACE, clusterName, appName);
-        verifyLabelsForConfigMaps(NAMESPACE, clusterName, appName);
-        verifyLabelsForServiceAccounts(clusterName, appName);
+        verifyLabelsForKafkaAndZKServices(NAMESPACE, clusterName, appName);
+        verifyLabelsForSecrets(NAMESPACE, clusterName, appName);
+        verifyLabelsForConfigMaps(NAMESPACE, clusterName, appName, "");
         verifyLabelsForRoleBindings(clusterName, appName);
+        verifyLabelsForServiceAccounts(clusterName, appName);
 
         LOGGER.info("Deleting Kafka cluster {} after test", clusterName);
         oc.deleteByName("Kafka", clusterName);
@@ -753,10 +753,11 @@ class KafkaST extends AbstractST {
         // Deploy Mirror Maker
         resources().kafkaMirrorMaker(CLUSTER_NAME, kafkaSourceName, kafkaTargetName, "my-group", 1, false).done();
 
-        verifyLabelsOnMMPods(NAMESPACE, CLUSTER_NAME, 1);
-        verifyLabelsForMMService(NAMESPACE, CLUSTER_NAME);
-        verifyLabelsForMMConfigMaps(NAMESPACE, CLUSTER_NAME);
-        verifyLabelsForMMServiceAccount(CLUSTER_NAME);
+        verifyLabelsOnPods(NAMESPACE, CLUSTER_NAME, "mirror-maker", null, "KafkaMirrorMaker");
+        verifyLabelsForService(NAMESPACE, CLUSTER_NAME, "mirror-maker", "KafkaMirrorMaker");
+
+        verifyLabelsForConfigMaps(NAMESPACE, kafkaSourceName, null, kafkaTargetName);
+        verifyLabelsForServiceAccounts(NAMESPACE, CLUSTER_NAME);
 
         TimeMeasuringSystem.stopOperation(operationID);
         // Wait when Mirror Maker will join group
