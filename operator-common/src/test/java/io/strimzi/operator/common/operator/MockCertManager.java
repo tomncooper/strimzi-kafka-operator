@@ -188,7 +188,7 @@ public class MockCertManager implements CertManager {
      */
     @Override
     public void generateCsr(File keyFile, File csrFile, Subject sbj) throws IOException {
-        write(keyFile, CLUSTER_KEY);
+        write(keyFile, "key file");
         write(csrFile, "csr file");
     }
 
@@ -204,12 +204,12 @@ public class MockCertManager implements CertManager {
      */
     @Override
     public void generateCert(File csrFile, File caKey, File caCert, File crtFile, int days) throws IOException {
-        write(crtFile, CLUSTER_CERT);
+        write(crtFile, "crt file");
     }
 
     @Override
     public void generateCert(File csrFile, File caKey, File caCert, File crtFile, Subject sbj, int days) throws IOException {
-        write(crtFile, CLUSTER_CERT);
+        write(crtFile, "crt file");
     }
 
     /**
@@ -224,11 +224,11 @@ public class MockCertManager implements CertManager {
      */
     @Override
     public void generateCert(File csrFile, byte[] caKey, byte[] caCert, File crtFile, int days) throws IOException {
-        write(crtFile, CLUSTER_CERT);
+        write(crtFile, "crt file");
     }
 
     @Override
     public void generateCert(File csrFile, byte[] caKey, byte[] caCert, File crtFile, Subject sbj, int days) throws IOException {
-        write(crtFile, CLUSTER_CERT);
+        write(crtFile, "crt file");
     }
 }
