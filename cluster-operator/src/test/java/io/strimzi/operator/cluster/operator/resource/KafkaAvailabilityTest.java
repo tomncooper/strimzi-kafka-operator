@@ -113,7 +113,6 @@ public class KafkaAvailabilityTest {
 
             public BSB(int id) {
                 this.id = id;
-                KSB.this.brokers.put(id, this);
                 KSB.this.nodes.put(id, new Node(id, "localhost", 1234 + id));
             }
 
