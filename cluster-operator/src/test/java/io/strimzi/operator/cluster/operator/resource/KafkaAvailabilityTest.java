@@ -91,7 +91,6 @@ public class KafkaAvailabilityTest {
             public TSB(String name, boolean internal) {
                 this.name = name;
                 this.internal = internal;
-                KSB.this.topics.put(name, this);
             }
 
             TSB addToConfig(String config, String value) {
