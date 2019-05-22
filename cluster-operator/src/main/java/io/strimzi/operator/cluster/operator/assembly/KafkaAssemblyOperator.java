@@ -625,7 +625,7 @@ public class KafkaAssemblyOperator extends AbstractAssemblyOperator<KubernetesCl
 
                             return zkSetOperations.maybeRollingUpdate(ss, pod -> {
 
-                                log.debug("{}: Rolling Zookeeper pod {} to manual rolling update",
+                                log.debug("{}: Rolling Zookeeper pod {} due to manual rolling update",
                                         reconciliation, pod.getMetadata().getName());
                                 return true;
                             });
