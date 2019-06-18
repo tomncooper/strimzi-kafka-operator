@@ -119,6 +119,8 @@ public class KafkaRoller {
      * Pods will be tested for whether the really need rolling using the given {@code podNeedsRestart}.
      * If a pod does indeed need restarting {@link #postRestartBarrier(Pod)} is called afterwards.
      * The returned Future is completed when the rolling restart is completed.
+     * @param podNeedsRestart Predicate for deciding whether the pod needs to be restarted.
+     * @return A future which completes when all the required pods have been restarted.
      */
     public Future<Void> rollingRestart(
                                 Predicate<Pod> podNeedsRestart) {
@@ -214,7 +216,6 @@ public class KafkaRoller {
             this.nextDeadline = 0;
         }
 
-        /** Queue for retry after a delay */
         private Monitor backoffAndRetry(Logger logger) {
             long delayMs = backOff.delayMs();
             logger.debug("Will retry pod {} in {}ms", podId, delayMs);
@@ -381,6 +382,9 @@ public class KafkaRoller {
     /**
      * Completes the returned future <strong>on the context thread</strong> with the id of the controller of the cluster.
      * This will be -1 if there is not currently a controller.
+     * @param ac The AdminClient
+     * @return A future which completes the the node id of the controller of the cluster,
+     * or -1 if there is not currently a controller.
      */
     Future<Integer> controller(AdminClient ac) {
         Future<Integer> result = Future.future();
@@ -411,6 +415,9 @@ public class KafkaRoller {
     /**
      * Re-queue for retry, completing the returned future after a delay, or failing
      * it if it's already been retried too many times.
+     * @param podNeedsRestart Predicate for deciding whether the pod needs to be restarted.
+     * @param monitor The monitor
+     * @return A future.
      */
     protected Future<Integer> requeueOrAbort(Predicate<Pod> podNeedsRestart, Monitor monitor) {
         try {

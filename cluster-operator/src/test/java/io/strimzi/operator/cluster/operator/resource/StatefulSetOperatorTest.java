@@ -435,6 +435,11 @@ public class StatefulSetOperatorTest
 
         StatefulSetOperator op = new StatefulSetOperator(AbstractResourceOperatorTest.vertx, mockClient, 5_000L, podOperator, pvcOperator) {
             @Override
+            public Future<Void> maybeRollingUpdate(StatefulSet ss, Predicate<Pod> podNeedsRestart, Secret clusterCaSecret, Secret coKeySecret) {
+                return Future.succeededFuture();
+            }
+
+            @Override
             protected boolean shouldIncrementGeneration(StatefulSetDiff diff) {
                 return true;
             }
@@ -475,6 +480,11 @@ public class StatefulSetOperatorTest
 
         StatefulSetOperator op = new StatefulSetOperator(AbstractResourceOperatorTest.vertx, mockClient, 5_000L, podOperator, pvcOperator) {
             @Override
+            public Future<Void> maybeRollingUpdate(StatefulSet ss, Predicate<Pod> podNeedsRestart, Secret clusterCaSecret, Secret coKeySecret) {
+                return Future.succeededFuture();
+            }
+
+            @Override
             protected boolean shouldIncrementGeneration(StatefulSetDiff diff) {
                 return true;
             }
@@ -514,6 +524,11 @@ public class StatefulSetOperatorTest
 
         StatefulSetOperator op = new StatefulSetOperator(AbstractResourceOperatorTest.vertx, mockClient, 5_000L, podOperator, pvcOperator) {
             @Override
+            public Future<Void> maybeRollingUpdate(StatefulSet ss, Predicate<Pod> podNeedsRestart, Secret clusterCaSecret, Secret coKeySecret) {
+                return Future.succeededFuture();
+            }
+
+            @Override
             protected boolean shouldIncrementGeneration(StatefulSetDiff diff) {
                 return true;
             }
@@ -550,6 +565,11 @@ public class StatefulSetOperatorTest
         mocker(mockClient, mockCms);
 
         StatefulSetOperator op = new StatefulSetOperator(AbstractResourceOperatorTest.vertx, mockClient, 5_000L, podOperator, pvcOperator) {
+            @Override
+            public Future<Void> maybeRollingUpdate(StatefulSet ss, Predicate<Pod> podNeedsRestart, Secret clusterCaSecret, Secret coKeySecret) {
+                return Future.succeededFuture();
+            }
+
             @Override
             protected boolean shouldIncrementGeneration(StatefulSetDiff diff) {
                 return true;

@@ -31,6 +31,7 @@ public class KafkaSetOperator extends StatefulSetOperator {
      * @param vertx  The Vertx instance
      * @param client The Kubernetes client
      * @param operationTimeoutMs The timeout.
+     * @param adminClientProvider A provider for the AdminClient.
      */
     public KafkaSetOperator(Vertx vertx, KubernetesClient client, long operationTimeoutMs,
                             AdminClientProvider adminClientProvider) {

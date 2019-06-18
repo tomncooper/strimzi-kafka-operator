@@ -61,7 +61,15 @@ public abstract class StatefulSetOperator extends AbstractScalableResourceOperat
         this(vertx, client, operationTimeoutMs, new PodOperator(vertx, client), new PvcOperator(vertx, client));
     }
 
-    public StatefulSetOperator(Vertx vertx, KubernetesClient client, long operationTimeoutMs, PodOperator podOperator, PvcOperator pvcOperator) {
+    /**
+     * @param vertx The Vertx instance.
+     * @param client The Kubernetes client.
+     * @param operationTimeoutMs The timeout.
+     * @param podOperator The pod operator.
+     * @param pvcOperator The PVC operator.
+     */
+    public StatefulSetOperator(Vertx vertx, KubernetesClient client, long operationTimeoutMs,
+                               PodOperator podOperator, PvcOperator pvcOperator) {
         super(vertx, client, "StatefulSet");
         this.secretOperations = new SecretOperator(vertx, client);
         this.podOperations = podOperator;
@@ -81,7 +89,7 @@ public abstract class StatefulSetOperator extends AbstractScalableResourceOperat
      * once the pod has been recreated then given {@code isReady} function will be polled until it returns true,
      * before the process proceeds with the pod with the next higher number.
      * @param ss The StatefulSet
-     * @param podRestart Function to test whether a given pod needs to be restarted.
+     * @param podNeedsRestart Predicate for deciding whether the pod needs to be restarted.
      * @return A future that completes when any necessary rolling has been completed.
      */
     public Future<Void> maybeRollingUpdate(StatefulSet ss, Predicate<Pod> podNeedsRestart) {
