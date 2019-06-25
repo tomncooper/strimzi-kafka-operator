@@ -45,17 +45,17 @@ spec:
           value: myproject,myproject2,myproject3
 ----
 
-. For all {namespace}s which should be watched by the Cluster Operator, install the `RoleBindings`.
-Replace the `_my-{namespace}_` with the {PlatformNameNamespace} used in the previous step.
+. For all namespaces which should be watched by the Cluster Operator, install the `RoleBindings`.
+Replace the `_my-namespace_` with the {PlatformNameNamespace} used in the previous step.
 +
 This can be done using `{cmdcli} apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml -n _my-{namespace}_
-{cmdcli} apply -f install/cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml -n _my-{namespace}_
-{cmdcli} apply -f install/cluster-operator/032-RoleBinding-strimzi-cluster-operator-topic-operator-delegation.yaml -n _my-{namespace}_
+{cmdcli} apply -f install/cluster-operator/020-RoleBinding-strimzi-cluster-operator.yaml -n _my-namespace_
+{cmdcli} apply -f install/cluster-operator/031-RoleBinding-strimzi-cluster-operator-entity-operator-delegation.yaml -n _my-namespace_
+{cmdcli} apply -f install/cluster-operator/032-RoleBinding-strimzi-cluster-operator-topic-operator-delegation.yaml -n _my-namespace_
 
 . Deploy the Cluster Operator
 +
 This can be done using `{cmdcli} apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f install/cluster-operator -n _my-{namespace}_
+{cmdcli} apply -f install/cluster-operator -n _my-namespace_

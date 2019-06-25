@@ -1,7 +1,5 @@
 // :namespace: controls the CLI command
 :cmdcli: oc
-// :namespace: controls the word used for namespace in
-:namespace: project
 
 // Name and version placeholders
 :ProductLongName: Strimzi

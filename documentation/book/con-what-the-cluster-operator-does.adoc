@@ -18,7 +18,7 @@ endif::OpenShift[]
 image:cluster-operator.png[Cluster Operator]
 
 When the Cluster Operator is up, it starts to _watch_ for certain {ProductPlatformName} resources containing the desired Kafka, Kafka Connect, or Kafka Mirror Maker cluster configuration.
-By default, it watches only in the same {namespace} where it is installed.
+By default, it watches only in the same namespace where it is installed.
 The Cluster Operator can be configured to watch for more {PlatformNameNamespaces}.
 Cluster Operator watches the following resources:
 
