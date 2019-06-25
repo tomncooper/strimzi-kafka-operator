@@ -54,20 +54,11 @@ This can be done using `{cmdcli} get`:
 Use the hostname or IP address together with port 9094 in your Kafka client as the _bootstrap_ address.
 
 . Unless TLS encryption was disabled, extract the public certificate of the broker certification authority.
-ifdef::Kubernetes[]
 +
 This can be done using `{cmdcli} get`:
 +
 [source,shell,subs="+quotes,attributes+"]
 {cmdcli} get secret _cluster-name_-cluster-ca-cert -o jsonpath='{.data.ca\.crt}' | base64 -d > ca.crt
-endif::[]
-ifdef::OpenShift[]
-+
-On {OpenShiftName} this can be done using `oc extract`:
-+
-[source,shell,subs="+quotes,attributes+"]
-oc extract secret/_cluster-name_-cluster-ca-cert --keys=ca.crt --to=- > ca.crt`
-endif::[]
 +
 Use the extracted certificate in your Kafka client to configure TLS connection.
 If you enabled any authentication, you will also need to configure SASL or TLS authentication.
