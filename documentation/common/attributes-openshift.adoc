@@ -15,10 +15,6 @@
 :ProductPlatformLongName: {OpenShiftLongName}
 :AProductPlatformName: An {OpenShiftName}
 :_aProductPlatformName: an {OpenShiftName}
-:PlatformNameNamespace: {OpenShiftName} project
-:PlatformNameNamespaces: {OpenShiftName} projects
-:_aPlatformNameNamespace: {OpenShiftName} project
-:APlatformNameNamespace: An {OpenShiftName} project
 
 // Section enablers
 //:Kubernetes:

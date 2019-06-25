@@ -44,7 +44,7 @@ spec:
         # ...
 ----
 
-. Create `ClusterRoleBindings` that grant cluster-wide access to all {PlatformNameNamespaces} to the Cluster Operator.
+. Create `ClusterRoleBindings` that grant cluster-wide access to all namespaces to the Cluster Operator.
 +
 ifdef::OpenShift[]
 On {OpenShiftName}, use the `oc adm policy` command:

@@ -7,7 +7,7 @@
 
 .Prerequisites
 
-* Edit the installation files according to the {PlatformNameNamespace} the Cluster Operator is going to be installed in.
+* Edit the installation files according to the namespace the Cluster Operator is going to be installed in.
 +
 On Linux, use:
 +
@@ -25,7 +25,7 @@ sed -i '' 's/namespace: .\*/namespace: _my-namespace_/' install/cluster-operator
 
 .Procedure
 
-. Edit the file `install/cluster-operator/050-Deployment-strimzi-cluster-operator.yaml` and in the environment variable `STRIMZI_NAMESPACE` list all the {PlatformNameNamespaces} where Cluster Operator should watch for resources.
+. Edit the file `install/cluster-operator/050-Deployment-strimzi-cluster-operator.yaml` and in the environment variable `STRIMZI_NAMESPACE` list all the namespaces where Cluster Operator should watch for resources.
 For example:
 +
 [source,yaml,subs="attributes"]
@@ -46,7 +46,7 @@ spec:
 ----
 
 . For all namespaces which should be watched by the Cluster Operator, install the `RoleBindings`.
-Replace the `_my-namespace_` with the {PlatformNameNamespace} used in the previous step.
+Replace the `_my-namespace_` with the namespace used in the previous step.
 +
 This can be done using `{cmdcli} apply`:
 [source,shell,subs="+quotes,attributes+"]

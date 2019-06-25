@@ -15,10 +15,6 @@
 :ProductPlatformLongName: {KubernetesLongName}
 :AProductPlatformName: A {KubernetesName}
 :_aProductPlatformName: a {KubernetesName}
-:PlatformNameNamespace: {KubernetesName} namespace
-:PlatformNameNamespaces: {KubernetesName} namespaces
-:_aPlatformNameNamespace: a {KubernetesName} namespace
-:APlatformNameNamespace: A {KubernetesName} namespace
 
 // Section enablers
 :Kubernetes:
