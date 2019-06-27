@@ -92,7 +92,7 @@ public class KafkaConnectS2IAssemblyOperatorTest {
     @Test
     public void testCreateCluster(TestContext context) {
         ResourceOperatorSupplier supplier = ResourceUtils.supplierWithMocks(true);
-        CrdOperator mockConnectOps = supplier.connectOperator;
+        CrdOperator mockConnectOps = supplier.connectS2IOperator;
         DeploymentConfigOperator mockDcOps = supplier.deploymentConfigOperations;
         PodDisruptionBudgetOperator mockPdbOps = supplier.podDisruptionBudgetOperator;
         ConfigMapOperator mockCmOps = supplier.configMapOperations;
@@ -105,6 +105,8 @@ public class KafkaConnectS2IAssemblyOperatorTest {
 
         KafkaConnectS2I clusterCm = ResourceUtils.createEmptyKafkaConnectS2ICluster(clusterCmNamespace, clusterCmName);
         when(mockConnectOps.get(clusterCmNamespace, clusterCmName)).thenReturn(clusterCm);
+        when(mockConnectOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(clusterCm));
+        when(mockConnectOps.updateStatusAsync(any(KafkaConnectS2I.class))).thenReturn(Future.succeededFuture());
 
         ArgumentCaptor<Service> serviceCaptor = ArgumentCaptor.forClass(Service.class);
         when(mockServiceOps.reconcile(anyString(), anyString(), serviceCaptor.capture())).thenReturn(Future.succeededFuture());
@@ -202,6 +204,8 @@ public class KafkaConnectS2IAssemblyOperatorTest {
         KafkaConnectS2I clusterCm = ResourceUtils.createEmptyKafkaConnectS2ICluster(clusterCmNamespace, clusterCmName);
         KafkaConnectS2ICluster connect = KafkaConnectS2ICluster.fromCrd(clusterCm, VERSIONS);
         when(mockConnectOps.get(clusterCmNamespace, clusterCmName)).thenReturn(clusterCm);
+        when(mockConnectOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(clusterCm));
+        when(mockConnectOps.updateStatusAsync(any(KafkaConnectS2I.class))).thenReturn(Future.succeededFuture());
         when(mockServiceOps.get(clusterCmNamespace, connect.getName())).thenReturn(connect.generateService());
         when(mockDcOps.get(clusterCmNamespace, connect.getName())).thenReturn(connect.generateDeploymentConfig(new HashMap<String, String>(), true, null, null));
         when(mockIsOps.get(clusterCmNamespace, connect.getSourceImageStreamName())).thenReturn(connect.generateSourceImageStream());
@@ -302,6 +306,8 @@ public class KafkaConnectS2IAssemblyOperatorTest {
         clusterCm.getSpec().setImage("some/different:image"); // Change the image to generate some diff
 
         when(mockConnectOps.get(clusterCmNamespace, clusterCmName)).thenReturn(clusterCm);
+        when(mockConnectOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(clusterCm));
+        when(mockConnectOps.updateStatusAsync(any(KafkaConnectS2I.class))).thenReturn(Future.succeededFuture());
         when(mockServiceOps.get(clusterCmNamespace, connect.getName())).thenReturn(connect.generateService());
         when(mockDcOps.get(clusterCmNamespace, connect.getName())).thenReturn(connect.generateDeploymentConfig(new HashMap<String, String>(), true, null, null));
         when(mockIsOps.get(clusterCmNamespace, connect.getSourceImageStreamName())).thenReturn(connect.generateSourceImageStream());
@@ -480,6 +486,8 @@ public class KafkaConnectS2IAssemblyOperatorTest {
         when(mockBcOps.reconcile(bcNamespaceCaptor.capture(), bcNameCaptor.capture(), bcCaptor.capture())).thenReturn(Future.succeededFuture());
 
         when(mockConnectOps.reconcile(anyString(), any(), any())).thenReturn(Future.succeededFuture(ReconcileResult.created(null)));
+        when(mockConnectOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(clusterCm));
+        when(mockConnectOps.updateStatusAsync(any(KafkaConnectS2I.class))).thenReturn(Future.succeededFuture());
         when(mockCmOps.reconcile(anyString(), any(), any())).thenReturn(Future.succeededFuture(ReconcileResult.created(null)));
         when(mockPdbOps.reconcile(any(), any(), any())).thenReturn(Future.succeededFuture());
 
@@ -519,6 +527,8 @@ public class KafkaConnectS2IAssemblyOperatorTest {
         clusterCm.getSpec().setReplicas(scaleTo); // Change replicas to create ScaleUp
 
         when(mockConnectOps.get(clusterCmNamespace, clusterCmName)).thenReturn(clusterCm);
+        when(mockConnectOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(clusterCm));
+        when(mockConnectOps.updateStatusAsync(any(KafkaConnectS2I.class))).thenReturn(Future.succeededFuture());
         when(mockServiceOps.get(clusterCmNamespace, connect.getName())).thenReturn(connect.generateService());
         when(mockDcOps.get(clusterCmNamespace, connect.getName())).thenReturn(connect.generateDeploymentConfig(new HashMap<String, String>(), true, null, null));
         when(mockIsOps.get(clusterCmNamespace, connect.getSourceImageStreamName())).thenReturn(connect.generateSourceImageStream());
@@ -578,6 +588,8 @@ public class KafkaConnectS2IAssemblyOperatorTest {
         clusterCm.getSpec().setReplicas(scaleTo); // Change replicas to create ScaleDown
 
         when(mockConnectOps.get(clusterCmNamespace, clusterCmName)).thenReturn(clusterCm);
+        when(mockConnectOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(clusterCm));
+        when(mockConnectOps.updateStatusAsync(any(KafkaConnectS2I.class))).thenReturn(Future.succeededFuture());
         when(mockServiceOps.get(clusterCmNamespace, connect.getName())).thenReturn(connect.generateService());
         when(mockDcOps.get(clusterCmNamespace, connect.getName())).thenReturn(connect.generateDeploymentConfig(new HashMap<String, String>(), true, null, null));
         when(mockIsOps.get(clusterCmNamespace, connect.getSourceImageStreamName())).thenReturn(connect.generateSourceImageStream());
@@ -637,6 +649,8 @@ public class KafkaConnectS2IAssemblyOperatorTest {
         // when requested ConfigMap for a specific Kafka Connect S2I cluster
         when(mockConnectOps.get(eq(clusterCmNamespace), eq("foo"))).thenReturn(foo);
         when(mockConnectOps.get(eq(clusterCmNamespace), eq("bar"))).thenReturn(bar);
+        when(mockConnectOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(bar));
+        when(mockConnectOps.updateStatusAsync(any(KafkaConnectS2I.class))).thenReturn(Future.succeededFuture());
 
         // providing the list of ALL DeploymentConfigs for all the Kafka Connect S2I clusters
         Labels newLabels = Labels.forKind(KafkaConnectS2I.RESOURCE_KIND);

@@ -12,17 +12,23 @@ import io.strimzi.api.kafka.KafkaConnectS2IList;
 import io.strimzi.api.kafka.model.DoneableKafkaConnectS2I;
 import io.strimzi.api.kafka.model.ExternalLogging;
 import io.strimzi.api.kafka.model.KafkaConnectS2I;
+import io.strimzi.api.kafka.model.KafkaConnectS2IBuilder;
+import io.strimzi.api.kafka.model.status.Condition;
+import io.strimzi.api.kafka.model.status.ConditionBuilder;
+import io.strimzi.api.kafka.model.status.KafkaConnectS2Istatus;
 import io.strimzi.certs.CertManager;
 import io.strimzi.operator.cluster.ClusterOperatorConfig;
 import io.strimzi.operator.PlatformFeaturesAvailability;
 import io.strimzi.operator.cluster.model.KafkaConnectCluster;
 import io.strimzi.operator.cluster.model.KafkaConnectS2ICluster;
+import io.strimzi.operator.cluster.model.StatusDiff;
 import io.strimzi.operator.cluster.operator.resource.ResourceOperatorSupplier;
 import io.strimzi.operator.cluster.model.KafkaVersion;
 import io.strimzi.operator.common.Annotations;
 import io.strimzi.operator.common.Reconciliation;
 import io.strimzi.operator.common.model.ResourceType;
 import io.strimzi.operator.common.operator.resource.BuildConfigOperator;
+import io.strimzi.operator.common.operator.resource.CrdOperator;
 import io.strimzi.operator.common.operator.resource.DeploymentConfigOperator;
 import io.strimzi.operator.common.operator.resource.ImageStreamOperator;
 import io.strimzi.operator.common.operator.resource.ReconcileResult;
@@ -31,6 +37,9 @@ import io.vertx.core.Vertx;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -77,6 +86,7 @@ public class KafkaConnectS2IAssemblyOperator extends AbstractAssemblyOperator<Op
             return Future.failedFuture("Spec cannot be null");
         }
         if (pfa.hasImages() && pfa.hasApps() && pfa.hasBuilds()) {
+            Future<Void> createOrUpdateFuture = Future.future();
             KafkaConnectS2ICluster connect;
             try {
                 connect = KafkaConnectS2ICluster.fromCrd(kafkaConnectS2I, versions);
@@ -90,8 +100,8 @@ public class KafkaConnectS2IAssemblyOperator extends AbstractAssemblyOperator<Op
 
             HashMap<String, String> annotations = new HashMap();
             annotations.put(ANNO_STRIMZI_IO_LOGGING, logAndMetricsConfigMap.getData().get(connect.ANCILLARY_CM_KEY_LOG_CONFIG));
-
-            return connectServiceAccount(namespace, connect)
+            Future<Void> chainFuture = Future.future();
+            connectServiceAccount(namespace, connect)
                     .compose(i -> deploymentConfigOperations.scaleDown(namespace, connect.getName(), connect.getReplicas()))
                     .compose(scale -> serviceOperations.reconcile(namespace, connect.getServiceName(), connect.generateService()))
                     .compose(i -> configMapOperations.reconcile(namespace, connect.getAncillaryConfigName(), logAndMetricsConfigMap))
@@ -100,15 +110,122 @@ public class KafkaConnectS2IAssemblyOperator extends AbstractAssemblyOperator<Op
                     .compose(i -> imagesStreamOperations.reconcile(namespace, connect.getName(), connect.generateTargetImageStream()))
                     .compose(i -> podDisruptionBudgetOperator.reconcile(namespace, connect.getName(), connect.generatePodDisruptionBudget()))
                     .compose(i -> buildConfigOperations.reconcile(namespace, connect.getName(), connect.generateBuildConfig()))
-                    .compose(i -> deploymentConfigOperations.scaleUp(namespace, connect.getName(), connect.getReplicas()).map((Void) null));
+                    .compose(i -> deploymentConfigOperations.scaleUp(namespace, connect.getName(), connect.getReplicas())).compose(i -> chainFuture.complete(), chainFuture)
+                    .setHandler(reconciliationResult -> {
+                        Condition readyCondition;
+                        KafkaConnectS2Istatus kafkaConnectS2Istatus = new KafkaConnectS2Istatus();
+
+                        if (kafkaConnectS2I.getMetadata().getGeneration() != null) {
+                            kafkaConnectS2Istatus.setObservedGeneration(kafkaConnectS2I.getMetadata().getGeneration());
+                        }
+
+                        if (reconciliationResult.succeeded()) {
+                            readyCondition = new ConditionBuilder()
+                                    .withNewLastTransitionTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(dateSupplier()))
+                                    .withNewType("Ready")
+                                    .withNewStatus("True")
+                                    .build();
+                        } else {
+                            readyCondition = new ConditionBuilder()
+                                    .withNewLastTransitionTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(dateSupplier()))
+                                    .withNewType("NotReady")
+                                    .withNewStatus("True")
+                                    .withNewReason(reconciliationResult.cause().getClass().getSimpleName())
+                                    .withNewMessage(reconciliationResult.cause().getMessage())
+                                    .build();
+                        }
+
+                        kafkaConnectS2Istatus.setField("todo");
+                        kafkaConnectS2Istatus.setConditions(Collections.singletonList(readyCondition));
+
+                        updateStatus(kafkaConnectS2I, reconciliation, kafkaConnectS2Istatus).setHandler(statusResult -> {
+                            if (statusResult.succeeded()) {
+                                log.debug("Status for {} is up to date", kafkaConnectS2I.getMetadata().getName());
+                            } else {
+                                log.error("Failed to set status for {}. {}", kafkaConnectS2I.getMetadata().getName(), statusResult.cause().getMessage());
+                            }
+
+                            // If both features succeeded, createOrUpdate succeeded as well
+                            // If one or both of them failed, we prefer the reconciliation failure as the main error
+                            if (reconciliationResult.succeeded() && statusResult.succeeded()) {
+                                createOrUpdateFuture.complete();
+                            } else if (reconciliationResult.failed()) {
+                                createOrUpdateFuture.fail(reconciliationResult.cause());
+                            } else {
+                                createOrUpdateFuture.fail(statusResult.cause());
+                            }
+                        });
+                    });
+            return createOrUpdateFuture;
+
         } else {
             return Future.failedFuture("The OpenShift build, image or apps APIs are not available in this Kubernetes cluster. Kafka Connect S2I deployment cannot be enabled.");
         }
+    }
+
+    /**
+     * Updates the Status field of the Kafka ConnectS2I CR. It diffs the desired status against the current status and calls
+     * the update only when there is any difference in non-timestamp fields.
+     *
+     * @param kafkaConnectS2Iassembly The CR of Kafka ConnectS2I
+     * @param reconciliation Reconciliation information
+     * @param desiredStatus The KafkaConnectS2Istatus which should be set
+     *
+     * @return
+     */
+    Future<Void> updateStatus(KafkaConnectS2I kafkaConnectS2Iassembly, Reconciliation reconciliation, KafkaConnectS2Istatus desiredStatus) {
+        Future<Void> updateStatusFuture = Future.future();
+
+        resourceOperator.getAsync(kafkaConnectS2Iassembly.getMetadata().getNamespace(), kafkaConnectS2Iassembly.getMetadata().getName()).setHandler(getRes -> {
+            if (getRes.succeeded()) {
+                KafkaConnectS2I connect = getRes.result();
+
+                if (connect != null) {
+                    if ("kafka.strimzi.io/v1alpha1".equals(connect.getApiVersion())) {
+                        log.warn("{}: The resource needs to be upgraded from version {} to 'v1beta1' to use the status field", reconciliation, connect.getApiVersion());
+                        updateStatusFuture.complete();
+                    } else {
+                        KafkaConnectS2Istatus currentStatus = connect.getStatus();
+
+                        StatusDiff ksDiff = new StatusDiff(currentStatus, desiredStatus);
+
+                        if (!ksDiff.isEmpty()) {
+                            KafkaConnectS2I resourceWithNewStatus = new KafkaConnectS2IBuilder(connect).withStatus(desiredStatus).build();
+
+                            ((CrdOperator<OpenShiftClient, KafkaConnectS2I, KafkaConnectS2IList, DoneableKafkaConnectS2I>) resourceOperator).updateStatusAsync(resourceWithNewStatus).setHandler(updateRes -> {
+                                if (updateRes.succeeded()) {
+                                    log.debug("{}: Completed status update", reconciliation);
+                                    updateStatusFuture.complete();
+                                } else {
+                                    log.error("{}: Failed to update status", reconciliation, updateRes.cause());
+                                    updateStatusFuture.fail(updateRes.cause());
+                                }
+                            });
+                        } else {
+                            log.debug("{}: Status did not change", reconciliation);
+                            updateStatusFuture.complete();
+                        }
+                    }
+                } else {
+                    log.error("{}: Current Kafka resource not found", reconciliation);
+                    updateStatusFuture.fail("Current Kafka ConnectS2I resource not found");
+                }
+            } else {
+                log.error("{}: Failed to get the current Kafka ConnectS2I resource and its status", reconciliation, getRes.cause());
+                updateStatusFuture.fail(getRes.cause());
+            }
+        });
+
+        return updateStatusFuture;
     }
 
     Future<ReconcileResult<ServiceAccount>> connectServiceAccount(String namespace, KafkaConnectCluster connect) {
         return serviceAccountOperations.reconcile(namespace,
                 KafkaConnectCluster.containerServiceAccountName(connect.getCluster()),
                 connect.generateServiceAccount());
+    }
+
+    private Date dateSupplier() {
+        return new Date();
     }
 }

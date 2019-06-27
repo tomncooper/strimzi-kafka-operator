@@ -119,6 +119,7 @@ public class Crds {
             group = KafkaConnect.RESOURCE_GROUP;
             kind = KafkaConnect.RESOURCE_KIND;
             listKind = KafkaConnect.RESOURCE_LIST_KIND;
+            status = new CustomResourceSubresourceStatus();
             if (!KafkaConnect.VERSIONS.contains(version)) {
                 throw new RuntimeException();
             }
@@ -130,6 +131,7 @@ public class Crds {
             group = KafkaConnectS2I.RESOURCE_GROUP;
             kind = KafkaConnectS2I.RESOURCE_KIND;
             listKind = KafkaConnectS2I.RESOURCE_LIST_KIND;
+            status = new CustomResourceSubresourceStatus();
             if (!KafkaConnectS2I.VERSIONS.contains(version)) {
                 throw new RuntimeException();
             }
