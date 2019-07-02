@@ -11,11 +11,11 @@ NOTE: In {OpenShiftName} a _project_ is a special kind of Kubernetes namespace.
 In this procedure the term namespace is used to refer to both.
 endif::[]
 
-You can configure the Cluster Operator to watch {ProductName} resources across all namespaces in your {ProductPlatformName} cluster. When running in this mode, the Cluster Operator automatically manages clusters in any new namespaces that are created.
+You can configure the Cluster Operator to watch {ProductName} resources across all namespaces in your Kubernetes cluster. When running in this mode, the Cluster Operator automatically manages clusters in any new namespaces that are created.
 
 .Prerequisites
 
-* Your {ProductPlatformName} cluster is running.
+* Your Kubernetes cluster is running.
 
 .Procedure
 
@@ -69,7 +69,7 @@ Replace `_my-namespace_` with the namespace in which you want to install the Clu
 endif::Kubernetes[]
 // end
 +
-. Deploy the Cluster Operator to your {ProductPlatformName} cluster.
+. Deploy the Cluster Operator to your Kubernetes cluster.
 +
 Use the `kubectl apply` command:
 +

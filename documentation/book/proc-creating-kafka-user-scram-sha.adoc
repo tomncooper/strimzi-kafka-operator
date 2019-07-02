@@ -46,7 +46,7 @@ spec:
         operation: Read
 ----
 
-. Create the `KafkaUser` resource in {ProductPlatformName}.
+. Create the `KafkaUser` resource in Kubernetes.
 +
 This can be done using `kubectl apply`:
 +

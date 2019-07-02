@@ -14,7 +14,7 @@
 
 . Edit the `Kafka` resource ensuring it has a `Kafka.spec.entityOperator.userOperator` object that configures the User Operator how you want.
 
-. Create or update the Kafka resource in {ProductPlatformName}.
+. Create or update the Kafka resource in Kubernetes.
 +
 This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]

@@ -5,7 +5,7 @@
 [id='deploying-kafka-cluster-{context}']
 = Deploying the Kafka cluster
 
-You can deploy an ephemeral or persistent Kafka cluster to {ProductPlatformName} on the command line.
+You can deploy an ephemeral or persistent Kafka cluster to Kubernetes on the command line.
 ifdef::OpenShift[]
 You can also deploy clusters in the {OpenShiftName} console.
 endif::[]

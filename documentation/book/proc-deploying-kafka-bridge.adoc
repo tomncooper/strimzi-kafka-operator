@@ -3,9 +3,9 @@
 // assembly-kafka-bridge.adoc
 
 [id='deploying-kafka-bridge-{context}']
-= Deploying Kafka Bridge to your {ProductPlatformName} cluster
+= Deploying Kafka Bridge to your Kubernetes cluster
 
-You can deploy a Kafka Bridge cluster to your {ProductPlatformName} cluster by using the Cluster Operator.
+You can deploy a Kafka Bridge cluster to your Kubernetes cluster by using the Cluster Operator.
 
 .Prerequisites
 

@@ -7,7 +7,7 @@
 
 .Prerequisites
 
-* An {ProductPlatformName} cluster
+* An Kubernetes cluster
 * A running Cluster Operator
 
 .Procedure

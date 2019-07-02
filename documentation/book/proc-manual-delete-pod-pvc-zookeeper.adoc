@@ -22,7 +22,7 @@ WARNING: Deleting a `PersistentVolumeClaim` can cause permanent data loss. The f
 +
 For example, if the cluster is named _cluster-name_, the pods are named _cluster-name_-zookeeper-_index_, where _index_ starts at zero and ends at the total number of replicas.
 
-. Annotate the `Pod` resource in {ProductPlatformName}.
+. Annotate the `Pod` resource in Kubernetes.
 +
 Use `kubectl annotate`:
 [source,shell,subs="+quotes,attributes+"]

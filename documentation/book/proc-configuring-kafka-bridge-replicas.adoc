@@ -9,7 +9,7 @@ The number of Kafka Bridge nodes is configured using the `replicas` property in 
 
 .Prerequisites
 
-* An {ProductPlatformName} cluster
+* An Kubernetes cluster
 * A running Cluster Operator
 
 .Procedure

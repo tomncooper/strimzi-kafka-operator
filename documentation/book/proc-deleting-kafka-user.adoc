@@ -5,7 +5,7 @@
 [id='deleting-kafka-user-{context}']
 = Deleting a Kafka user
 
-This procedure describes how to delete a Kafka user created with `KafkaUser` {ProductPlatformName} resource.
+This procedure describes how to delete a Kafka user created with `KafkaUser` Kubernetes resource.
 
 .Prerequisites
 
@@ -15,7 +15,7 @@ This procedure describes how to delete a Kafka user created with `KafkaUser` {Pr
 
 .Procedure
 
-* Delete the `KafkaUser` resource in {ProductPlatformName}.
+* Delete the `KafkaUser` resource in Kubernetes.
 +
 This can be done using `kubectl delete`:
 +

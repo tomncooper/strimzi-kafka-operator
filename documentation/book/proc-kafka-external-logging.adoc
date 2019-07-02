@@ -12,7 +12,7 @@ include::snip-configmap-logging-{kind}.adoc[]
 +
 Remember to place your custom ConfigMap under the `log4j.properties` or `log4j2.properties` key.
 +
-. Create or update the Kafka resource in {ProductPlatformName}.
+. Create or update the Kafka resource in Kubernetes.
 +
 This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]

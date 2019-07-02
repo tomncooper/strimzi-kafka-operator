@@ -103,8 +103,8 @@ For more information on using loadbalancers to access Kafka, see xref:proc-acces
 === Exposing Kafka using node ports
 
 External listeners of type `nodeport` expose Kafka by using `NodePort` type `Services`.
-When exposing Kafka in this way, Kafka clients connect directly to the nodes of {ProductPlatformName}.
-You must enable access to the ports on the {ProductPlatformName} nodes for each client (for example, in firewalls or security groups).
+When exposing Kafka in this way, Kafka clients connect directly to the nodes of Kubernetes.
+You must enable access to the ports on the Kubernetes nodes for each client (for example, in firewalls or security groups).
 Each Kafka broker pod is then accessible on a separate port.
 Additional `NodePort` type `Service` is created to serve as a Kafka bootstrap address.
 
@@ -122,7 +122,7 @@ To disable it, set the `tls` field to `false`.
 
 NOTE: TLS hostname verification is not currently supported when exposing Kafka clusters using node ports.
 
-By default, the port numbers used for the bootstrap and broker services are automatically assigned by {ProductPlatformName}.
+By default, the port numbers used for the bootstrap and broker services are automatically assigned by Kubernetes.
 However, you can override the assigned node ports by specifying the requested port numbers in the `overrides` property.
 {ProductName} does not perform any validation on the requested ports; you must ensure that they are free and available for use.
 
@@ -400,4 +400,4 @@ The application pods must be running in the same namespace as the Kafka broker.
 The syntax of the `networkPolicyPeers` field is the same as the `from` field in the `NetworkPolicy` resource in Kubernetes.
 For more information about the schema, see {K8sNetworkPolicyPeerAPI} and the xref:type-KafkaListeners-reference[`KafkaListeners` schema reference].
 
-NOTE: Your configuration of {ProductPlatformName} must support Ingress NetworkPolicies in order to use network policies in {ProductName}.
+NOTE: Your configuration of Kubernetes must support Ingress NetworkPolicies in order to use network policies in {ProductName}.

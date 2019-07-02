@@ -21,12 +21,12 @@ ifndef::Downloading[]
 endif::Downloading[]
 
 ifdef::InstallationAppendix[]
-When no existing {ProductPlatformName} cluster is available,
+When no existing Kubernetes cluster is available,
 ifdef::Kubernetes[`Minikube`]
 ifdef::Kubernetes+OpenShift[ or ]
 ifdef::OpenShift[`Minishift`]
 can be used to create a local cluster.
-More details can be found in xref:installing_kubernetes_and_openshift_cluster[Installing {ProductPlatformName} clusters].
+More details can be found in xref:installing_kubernetes_and_openshift_cluster[Installing Kubernetes clusters].
 endif::InstallationAppendix[]
 
 NOTE: To run the commands in this guide, your cluster user must have the rights to manage role-based access control (RBAC).

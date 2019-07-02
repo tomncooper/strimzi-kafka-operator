@@ -14,7 +14,7 @@ Open a terminal inside a Kafka container to use Kafka CLI tools that require a Z
 
 .Procedure
 
-. Open the terminal using the {ProductPlatformName} console or run the `exec` command from your CLI.
+. Open the terminal using the Kubernetes console or run the `exec` command from your CLI.
 +
 For example:
 +

@@ -18,7 +18,7 @@ This procedure describes how to manually trigger a rolling update of an existing
 +
 For example, if your Kafka cluster is named _my-cluster_, the corresponding `StatefulSet` is named _my-cluster-zookeeper_.
 
-. Annotate the `StatefulSet` resource in {ProductPlatformName}. For example, using `kubectl annotate`:
+. Annotate the `StatefulSet` resource in Kubernetes. For example, using `kubectl annotate`:
 [source,shell,subs="+quotes,attributes+"]
 kubectl annotate statefulset _cluster-name_-zookeeper strimzi.io/manual-rolling-update=true
 

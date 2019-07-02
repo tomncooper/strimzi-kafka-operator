@@ -7,7 +7,7 @@
 
 .Prerequisites
 
-* An {ProductPlatformName} cluster
+* An Kubernetes cluster
 * A running Cluster Operator
 * If they exist, the name of the `Secret` with the public and private keys used for TLS Client Authentication, and the keys under which they are stored in the `Secret`
 

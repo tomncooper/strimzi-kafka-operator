@@ -47,7 +47,7 @@ kubectl get service _cluster-name_-kafka-external-bootstrap -o=jsonpath='{.spec.
 +
 The port should be used in the Kafka _bootstrap_ address.
 
-. Find the address of the {ProductPlatformName} node.
+. Find the address of the Kubernetes node.
 +
 This can be done using `kubectl get`:
 [source,shell,subs="+quotes,attributes+"]
