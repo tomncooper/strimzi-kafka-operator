@@ -45,12 +45,6 @@ grep_check 'leveloffset+=[0-9]+'  "It should be 'leveloffset=+...' not '+='"
 # include: should be include::
 grep_check 'include:[^:[ ]+[[]'  "It should be 'include::...[]' (two colons) not 'include:...[]'"
 
-# The {ProductPlatformName} might begin with a vowel
-grep_check '(^|[^[:alnum:]])a[[:space:]]+{ProductPlatformName}' "Use '{aProductPlatformName}' rather than 'a {ProductPlatformName}'" '-E -r -n'
-grep_check '(^|[^[:alnum:]])A[[:space:]]+{ProductPlatformName}' "Use '{AProductPlatformName}' rather than 'a {ProductPlatformName}'" '-E -r -n'
-grep_check '(^|[^[:alnum:]])a[[:space:]]+{Namespace}' "Use '{aNamespace}' rather than 'a {Namespace}'" '-E -r -n'
-grep_check '(^|[^[:alnum:]])A[[:space:]]+{Namespace}' "Use '{ANamespace}' rather than 'a {Namespace}'" '-E -r -n'
-
 if [ $fatal -gt 0 ]; then
   echo "ERROR: ${fatal} docs problems found."
   exit 1
