@@ -123,5 +123,3 @@
 :MetricsAppendix:
 :Downloading:
 :SecurityImg:
-
-:NoteOpenShiftOnly: NOTE: This feature is only available on OpenShift.

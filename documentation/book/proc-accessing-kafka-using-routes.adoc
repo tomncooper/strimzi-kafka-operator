@@ -5,8 +5,6 @@
 [id='proc-accessing-kafka-using-routes-{context}']
 = Accessing Kafka using OpenShift routes
 
-{NoteOpenShiftOnly}
-
 .Prerequisites
 
 * An OpenShift cluster
