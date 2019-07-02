@@ -17,7 +17,7 @@ ifdef::OpenShift[`oc`]
 command-line tools are installed and configured to connect to the running cluster.
 
 ifndef::Downloading[]
-{ProductName} is based on Strimzi {StrimziVersion}. This chapter describes the procedures to deploy {ProductName} on {OpenShiftName} {OpenShiftVersion}.
+{ProductName} is based on Strimzi {StrimziVersion}. This chapter describes the procedures to deploy {ProductName} on OpenShift {OpenShiftVersion}.
 endif::Downloading[]
 
 ifdef::InstallationAppendix[]
@@ -32,7 +32,7 @@ endif::InstallationAppendix[]
 NOTE: To run the commands in this guide, your cluster user must have the rights to manage role-based access control (RBAC).
 
 ifdef::OpenShift[]
-For more information about {OpenShiftName} and setting up {OpenShiftName} cluster, see link:https://docs.openshift.com/container-platform/3.9/welcome/index.html[OpenShift documentation].
+For more information about OpenShift and setting up OpenShift cluster, see link:https://docs.openshift.com/container-platform/3.9/welcome/index.html[OpenShift documentation].
 endif::[]
 
 include::con-product-downloads.adoc[leveloffset=+1]

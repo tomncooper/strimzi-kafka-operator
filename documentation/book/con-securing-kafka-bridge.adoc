@@ -20,7 +20,7 @@ However, you can secure the Kafka Bridge using other methods, such as:
 
 * API Gateways.
 
-* Kubernetes Ingress or {OpenShiftName} Routes with TLS termination.
+* Kubernetes Ingress or OpenShift Routes with TLS termination.
 
 The Kafka Bridge supports TLS encryption and TLS and SASL authentication when connecting to the Kafka Brokers. Within your Kubernetes cluster, you can configure:
 

@@ -26,7 +26,7 @@ kubectl create clusterrolebinding strimzi-admin --clusterrole=strimzi-admin --us
 +
 endif::Kubernetes[]
 ifdef::OpenShift[]
-On {OpenShiftName}, use `oc adm`:
+On OpenShift, use `oc adm`:
 +
 [source,shell,subs=+quotes]
 oc adm policy add-cluster-role-to-user strimzi-admin _user1_ _user2_

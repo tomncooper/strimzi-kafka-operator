@@ -126,7 +126,7 @@ kubectl apply -f prometheus-rules.yaml
 kubectl apply -f prometheus.yaml
 
 ifdef::OpenShift[]
-NOTE: On {OpenShiftName} you need suitable privileges to do this.
+NOTE: On OpenShift you need suitable privileges to do this.
 On {Minishift}, log in with cluster administrator privileges by executing `oc login -u system:admin` before using the `kubectl apply` commands.
 endif::[]
 

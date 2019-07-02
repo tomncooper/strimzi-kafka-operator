@@ -23,7 +23,7 @@ kubectl taint node _your-node_ dedicated=Kafka:NoSchedule
 +
 endif::Kubernetes[]
 ifdef::OpenShift[]
-On {OpenShiftName} this can be done using `oc adm taint`:
+On OpenShift this can be done using `oc adm taint`:
 +
 [source,shell,subs=+quotes]
 oc adm taint node _your-node_ dedicated=Kafka:NoSchedule

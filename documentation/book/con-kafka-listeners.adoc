@@ -50,20 +50,20 @@ ifdef::Kubernetes[]
 endif::Kubernetes[]
 
 ifdef::OpenShift[]
-=== Exposing Kafka using {OpenShiftName} `Routes`
+=== Exposing Kafka using OpenShift `Routes`
 
-An external listener of type `route` exposes Kafka by using {OpenShiftName} `Routes` and the HAProxy router.
+An external listener of type `route` exposes Kafka by using OpenShift `Routes` and the HAProxy router.
 A dedicated `Route` is created for every Kafka broker pod.
 An additional `Route` is created to serve as a Kafka bootstrap address.
 Kafka clients can use these `Routes` to connect to Kafka on port 443.
 
-When exposing Kafka using {OpenShiftName} `Routes`, TLS encryption is always used.
+When exposing Kafka using OpenShift `Routes`, TLS encryption is always used.
 
-By default, the route hosts are automatically assigned by {OpenShiftName}.
+By default, the route hosts are automatically assigned by OpenShift.
 However, you can override the assigned route hosts by specifying the requested hosts in the `overrides` property.
 {ProductName} will not perform any validation that the requested hosts are available; you must ensure that they are free and can be used.
 
-.Example of an external listener of type `routes` configured with overrides for {OpenShiftName} route hosts
+.Example of an external listener of type `routes` configured with overrides for OpenShift route hosts
 [source,yaml,subs="attributes+"]
 ----
 # ...

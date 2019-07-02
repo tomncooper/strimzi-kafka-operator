@@ -14,7 +14,7 @@ If you want to make the Kafka Bridge accessible to applications running outside 
 
 * Kubernetes Ingress resources
 
-* {OpenShiftName} Routes
+* OpenShift Routes
 
 If you decide to create Services, use the following labels in the `selector` to configure the pods to which the service will route the traffic:
 

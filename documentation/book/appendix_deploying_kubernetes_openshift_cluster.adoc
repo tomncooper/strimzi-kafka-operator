@@ -30,11 +30,11 @@ minikube start --memory 4096
 endif::Kubernetes[]
 
 ifdef::OpenShift[]
-=== {OpenShiftName}
+=== OpenShift
 
-In order to interact with an {OpenShiftName} cluster, the https://github.com/openshift/origin/releases[`oc`] utility is needed.
+In order to interact with an OpenShift cluster, the https://github.com/openshift/origin/releases[`oc`] utility is needed.
 
-An {OpenShiftName} cluster can be started in two different ways. The `oc` utility can start a cluster locally using the
+An OpenShift cluster can be started in two different ways. The `oc` utility can start a cluster locally using the
 command:
 
 [source,shell]
@@ -43,7 +43,7 @@ oc cluster up
 This command requires Docker to be installed. More information about this way can be found
 https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md[here].
 
-Another option is to use `Minishift`. `Minishift` is an {OpenShiftName} installation within a VM. It can be downloaded and
+Another option is to use `Minishift`. `Minishift` is an OpenShift installation within a VM. It can be downloaded and
 installed from the https://docs.openshift.org/latest/minishift/index.html[Minishift website]. Depending on the number of brokers
 you want to deploy inside the cluster and if you need Kafka Connect running as well, it could be worth running `Minishift`
 at least with 4 GB of RAM instead of the default 2 GB.

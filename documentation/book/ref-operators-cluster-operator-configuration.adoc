@@ -57,7 +57,7 @@ The required syntax is whitespace or comma separated `_<version>_=_<image>_` pai
 For example `{KafkaVersionLower}={DockerKafkaImagePrevious}, {KafkaVersionHigher}={DockerKafkaImageCurrent}`.
 This is used when a `KafkaConnect.spec.version` property is specified but not the `KafkaConnect.spec.image`, as described in xref:assembly-configuring-container-images-deployment-configuration-kafka-connect[].
 
-`STRIMZI_KAFKA_CONNECT_S2I_IMAGES`:: Required on {OpenShiftName}
+`STRIMZI_KAFKA_CONNECT_S2I_IMAGES`:: Required on OpenShift
 This provides a mapping from the Kafka version to the corresponding Docker image containing a Kafka connect of that version.
 The required syntax is whitespace or comma separated `_<version>_=_<image>_` pairs.
 For example `{KafkaVersionLower}={DockerKafkaImagePrevious}, {KafkaVersionHigher}={DockerKafkaImageCurrent}`.

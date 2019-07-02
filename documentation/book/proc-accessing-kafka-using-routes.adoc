@@ -3,11 +3,11 @@
 // assembly-configuring-kafka-listeners.adoc
 
 [id='proc-accessing-kafka-using-routes-{context}']
-= Accessing Kafka using {OpenShiftName} routes
+= Accessing Kafka using OpenShift routes
 
 .Prerequisites
 
-* An {OpenShiftName} cluster
+* An OpenShift cluster
 * A running Cluster Operator
 
 .Procedure
