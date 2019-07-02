@@ -23,7 +23,7 @@ Copy this configuration to your own `Kafka` resource definition, or run this exa
 To deploy the example Kafka cluster the following command should be executed:
 
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/{GithubVersion}/metrics/examples/kafka/kafka-metrics.yaml
+kubectl apply -f https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/{GithubVersion}/metrics/examples/kafka/kafka-metrics.yaml
 
 === Prometheus
 
@@ -59,10 +59,10 @@ You can manually remove the `spec.template.spec.securityContext` property from t
 Next, apply all the files using the following commands:
 
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f prometheus-operator-service-account.yaml
-{cmdcli} apply -f prometheus-operator-cluster-role.yaml
-{cmdcli} apply -f prometheus-operator-cluster-role-binding.yaml
-{cmdcli} apply -f prometheus-operator-deployment.yaml
+kubectl apply -f prometheus-operator-service-account.yaml
+kubectl apply -f prometheus-operator-cluster-role.yaml
+kubectl apply -f prometheus-operator-cluster-role-binding.yaml
+kubectl apply -f prometheus-operator-deployment.yaml
 
 The {ProductName} repository contains link:https://github.com/strimzi/strimzi-kafka-operator/tree/{GithubVersion}/metrics/examples/prometheus/install[configuration files^] for the Prometheus server. When you apply these configuration files, the following resources are created in your {KubernetesName} cluster and managed by the Prometheus Operator.
 
@@ -104,7 +104,7 @@ To create this `Secret` resource, use the following command:
 
 [source,shell,subs="+quotes,attributes+"]
 curl -O https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/{GithubVersion}/metrics/examples/prometheus/additional-properties/prometheus-additional.yaml
-{cmdcli} create secret generic additional-scrape-configs --from-file=prometheus-additional.yaml
+kubectl create secret generic additional-scrape-configs --from-file=prometheus-additional.yaml
 
 The provided `prometheus-rules.yaml` file creates a `PrometheusRule` with sample alerting rules. Download and update the resource file as follows:
 
@@ -121,13 +121,13 @@ curl -s https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/{Github
 To deploy these resources, run the following commands:
 
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f strimzi-service-monitor.yaml
-{cmdcli} apply -f prometheus-rules.yaml
-{cmdcli} apply -f prometheus.yaml
+kubectl apply -f strimzi-service-monitor.yaml
+kubectl apply -f prometheus-rules.yaml
+kubectl apply -f prometheus.yaml
 
 ifdef::OpenShift[]
 NOTE: On {OpenShiftName} you need suitable privileges to do this.
-On {Minishift}, log in with cluster administrator privileges by executing `oc login -u system:admin` before using the `{cmdcli} apply` commands.
+On {Minishift}, log in with cluster administrator privileges by executing `oc login -u system:admin` before using the `kubectl apply` commands.
 endif::[]
 
 Prometheus also provides an alerting system through the link:https://prometheus.io/docs/alerting/alertmanager/[Alertmanager^] component.
@@ -145,7 +145,7 @@ A Grafana server is necessary to get a visualisation of the Prometheus metrics. 
 To deploy Grafana the following commands should be executed:
 
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/{GithubVersion}/metrics/examples/grafana/grafana.yaml
+kubectl apply -f https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/{GithubVersion}/metrics/examples/grafana/grafana.yaml
 
 === Grafana dashboard
 
@@ -156,7 +156,7 @@ No alerting rules are defined.
 
 The Grafana Prometheus data source, and the above dashboards, can be set up in Grafana by following these steps.
 
-NOTE: For accessing the dashboard, use the `port-forward` command for forwarding traffic from the Grafana pod to the host. For example, access the Grafana UI by running `{cmdcli} port-forward grafana-1-fbl7s 3000:3000` and then pointing a browser to `http://localhost:3000`.
+NOTE: For accessing the dashboard, use the `port-forward` command for forwarding traffic from the Grafana pod to the host. For example, access the Grafana UI by running `kubectl port-forward grafana-1-fbl7s 3000:3000` and then pointing a browser to `http://localhost:3000`.
 
 . Access to the Grafana UI using `admin/admin` credentials.  On the following view you can choose to skip resetting the admin password, or set it to a password you desire.
 +
@@ -243,12 +243,12 @@ Download the `alertmanager.yaml` file and create a `Secret` from it.
 This can be done using these commands:
 [source,shell,subs="+quotes,attributes+"]
 curl -O https://raw.githubusercontent.com/strimzi/strimzi-kafka-operator/{GithubVersion}/metrics/examples/prometheus/alertmanager-config/alertmanager.yaml
-{cmdcli} create secret generic alertmanager-alertmanager --from-file=alertmanager.yaml
+kubectl create secret generic alertmanager-alertmanager --from-file=alertmanager.yaml
 
 To deploy the Alertmanager the following commands should be executed:
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f alert-manager.yaml
+kubectl apply -f alert-manager.yaml
 
 ==== Alerts examples
 

@@ -13,12 +13,12 @@ You can deploy a Kafka Connect cluster to your {ProductPlatformName} cluster by 
 
 .Procedure
 
-* Use the `{cmdcli} apply` command to create a `KafkaConnect` resource based on the `kafka-connect.yaml` file:
+* Use the `kubectl apply` command to create a `KafkaConnect` resource based on the `kafka-connect.yaml` file:
 
 +
 [source,shell,subs="attributes+"]
 ----
-{cmdcli} apply -f examples/kafka-connect/kafka-connect.yaml
+kubectl apply -f examples/kafka-connect/kafka-connect.yaml
 ----
 
 .Additional resources

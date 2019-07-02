@@ -13,12 +13,12 @@ You can deploy a Kafka Bridge cluster to your {ProductPlatformName} cluster by u
 
 .Procedure
 
-* Use the `{cmdcli} apply` command to create a `KafkaBridge` resource based on the `kafka-bridge.yaml` file:
+* Use the `kubectl apply` command to create a `KafkaBridge` resource based on the `kafka-bridge.yaml` file:
 
 +
 [source,shell,subs="attributes+"]
 ----
-{cmdcli} apply -f examples/kafka-bridge/kafka-bridge.yaml
+kubectl apply -f examples/kafka-bridge/kafka-bridge.yaml
 ----
 
 .Additional resources

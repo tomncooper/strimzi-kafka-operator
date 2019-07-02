@@ -53,9 +53,9 @@ spec:
 +
 . Create or update the resource.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_
 
 . Create new topics or reassign existing partitions to the new disks.
 

@@ -52,9 +52,9 @@ spec:
 
 . Update the `KafkaUser` resource in {ProductPlatformName}.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_
 
 . Use the updated credentials from the `my-user` secret in your application.
 

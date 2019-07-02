@@ -51,7 +51,7 @@ For example if you want to reassign all the partitions of `topic-a` and `topic-b
 +
 [source,subs="+quotes,attributes+"]
 ----
-cat _topics.json_ | {cmdcli} exec -c kafka _<BrokerPod>_ -i -- \
+cat _topics.json_ | kubectl exec -c kafka _<BrokerPod>_ -i -- \
   /bin/bash -c \
   'cat > /tmp/topics.json'  
 ----
@@ -60,7 +60,7 @@ cat _topics.json_ | {cmdcli} exec -c kafka _<BrokerPod>_ -i -- \
 +
 [source,subs="+quotes,attributes+"]
 ----
-{cmdcli} exec _<BrokerPod>_ -c kafka -it -- \
+kubectl exec _<BrokerPod>_ -c kafka -it -- \
   bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 \
   --topics-to-move-json-file /tmp/topics.json \
   --broker-list _<BrokerList>_ \
@@ -71,7 +71,7 @@ For example, to move all the partitions of `topic-a` and `topic-b` to brokers `4
 +
 [source,shell,subs="+quotes,attributes+"]
 ----
-{cmdcli} exec _<BrokerPod>_ -c kafka -it -- \
+kubectl exec _<BrokerPod>_ -c kafka -it -- \
   bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 \
   --topics-to-move-json-file /tmp/topics.json \
   --broker-list 4,7 \

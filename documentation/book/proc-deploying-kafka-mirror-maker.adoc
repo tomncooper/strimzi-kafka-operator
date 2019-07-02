@@ -19,7 +19,7 @@ endif::[]
 +
 [source,shell,subs="attributes+"]
 ----
-{cmdcli} apply -f examples/kafka-mirror-maker/kafka-mirror-maker.yaml
+kubectl apply -f examples/kafka-mirror-maker/kafka-mirror-maker.yaml
 ----
 
 .Additional resources

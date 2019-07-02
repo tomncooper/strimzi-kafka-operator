@@ -38,9 +38,9 @@ spec:
 +
 . Create or update the resource.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_
 
 .Additional resources
 If your cluster already has topics defined, see

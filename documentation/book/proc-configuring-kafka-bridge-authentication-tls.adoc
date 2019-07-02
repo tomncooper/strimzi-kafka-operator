@@ -18,7 +18,7 @@
 NOTE: Secrets created by the User Operator may be used.
 +
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} create secret generic _my-secret_ --from-file=_my-public.crt_ --from-file=_my-private.key_
+kubectl create secret generic _my-secret_ --from-file=_my-public.crt_ --from-file=_my-private.key_
 
 . Edit the `authentication` property in the `KafkaBridge` resource.
 For example:
@@ -43,4 +43,4 @@ spec:
 . Create or update the resource.
 +
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_

@@ -31,9 +31,9 @@ Run the following commands:
 [source,shell,subs="+quotes,attributes+"]
 ----
 # Delete any existing secret (ignore "Not Exists" errors)
-{cmdcli} delete secret _<ca-cert-secret>_
+kubectl delete secret _<ca-cert-secret>_
 # Create and label the new one
-{cmdcli} create secret generic _<ca-cert-secret>_ --from-file=ca.crt=_<ca-cert-file>_
+kubectl create secret generic _<ca-cert-secret>_ --from-file=ca.crt=_<ca-cert-file>_
 ----
 
 . Put your CA key in the corresponding `Secret` (`_<cluster>_-cluster-ca` for the cluster CA or `_<cluster>_-clients-ca` for the clients CA)
@@ -43,9 +43,9 @@ Run the following commands:
 [source,shell,subs="+quotes,attributes+"]
 ----
 # Delete the existing secret
-{cmdcli} delete secret _<ca-key-secret>_
+kubectl delete secret _<ca-key-secret>_
 # Create the new one
-{cmdcli} create secret generic _<ca-key-secret>_ --from-file=ca.key=_<ca-key-file>_
+kubectl create secret generic _<ca-key-secret>_ --from-file=ca.key=_<ca-key-file>_
 ----
 
 
@@ -54,8 +54,8 @@ Run the following commands:
 +
 [source,shell,subs="+quotes,attributes+"]
 ----
-{cmdcli} label secret _<ca-cert-secret>_ strimzi.io/kind=Kafka strimzi.io/cluster=_<my-cluster>_
-{cmdcli} label secret _<ca-key-secret>_ strimzi.io/kind=Kafka strimzi.io/cluster=_<my-cluster>_
+kubectl label secret _<ca-cert-secret>_ strimzi.io/kind=Kafka strimzi.io/cluster=_<my-cluster>_
+kubectl label secret _<ca-key-secret>_ strimzi.io/kind=Kafka strimzi.io/cluster=_<my-cluster>_
 ----
 
 . Create the `Kafka` resource for your cluster, configuring either the `Kafka.spec.clusterCa` or the `Kafka.spec.clientsCa` object to _not_ use generated CAs:

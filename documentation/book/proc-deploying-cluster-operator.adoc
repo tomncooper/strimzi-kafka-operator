@@ -19,5 +19,5 @@ include::frag-cluster-operator-namespace-sed.adoc[]
 * Deploy the Cluster Operator:
 +
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f install/cluster-operator -n _my-namespace_
+kubectl apply -f install/cluster-operator -n _my-namespace_
 

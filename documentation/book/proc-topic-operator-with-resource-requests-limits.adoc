@@ -15,9 +15,9 @@ You can allocate resources, such as CPU and memory, to the Topic Operator and se
 
 . Update the Kafka cluster configuration in an editor, as required:
 +
-Use `{cmdcli} edit`:
+Use `kubectl edit`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} edit kafka my-cluster
+kubectl edit kafka my-cluster
 
 . In the `spec.entityOperator.topicOperator.resources` property in the `Kafka` resource, set the resource requests and limits for the Topic Operator.
 +
@@ -40,9 +40,9 @@ spec:
 
 . Apply the new configuration to create or update the resource.
 +
-Use `{cmdcli} apply`:
+Use `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _kafka.yaml_
+kubectl apply -f _kafka.yaml_
 
 .Additional resources
 

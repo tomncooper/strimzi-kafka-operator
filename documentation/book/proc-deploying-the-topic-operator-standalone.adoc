@@ -23,16 +23,16 @@ For instance, it can operate _with_ any Kafka cluster, not necessarily one deplo
 
 . Deploy the Topic Operator.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 +
 [source,shell,subs="attributes+"]
-{cmdcli} apply -f install/topic-operator
+kubectl apply -f install/topic-operator
 
 . Verify that the Topic Operator has been deployed successfully.
-This can be done using `{cmdcli} describe`:
+This can be done using `kubectl describe`:
 +
 [source,shell,subs="attributes+"]
-{cmdcli} describe deployment strimzi-topic-operator
+kubectl describe deployment strimzi-topic-operator
 +
 The Topic Operator is deployed once the `Replicas:` entry shows `1 available`.
 +

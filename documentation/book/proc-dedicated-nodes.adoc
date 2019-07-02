@@ -31,9 +31,9 @@ oc adm taint node _your-node_ dedicated=Kafka:NoSchedule
 endif::OpenShift[]
 . Additionally, add a label to the selected nodes as well.
 +
-This can be done using `{cmdcli} label`:
+This can be done using `kubectl label`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} label node _your-node_ dedicated=Kafka
+kubectl label node _your-node_ dedicated=Kafka
 +
 . Edit the `affinity` and `tolerations` properties in the resource specifying the cluster deployment.
 For example:
@@ -68,6 +68,6 @@ spec:
 
 . Create or update the resource.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_

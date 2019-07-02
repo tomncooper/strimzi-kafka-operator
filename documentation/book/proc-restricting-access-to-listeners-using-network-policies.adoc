@@ -40,9 +40,9 @@ spec:
 
 . Create or update the resource.
 +
-Use `{cmdcli} apply`:
+Use `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_
 
 .Additional resources
 * For more information about the schema, see {K8sNetworkPolicyPeerAPI} and the xref:type-KafkaListeners-reference[`KafkaListeners` schema reference].

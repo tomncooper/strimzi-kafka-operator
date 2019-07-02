@@ -21,10 +21,10 @@ The following steps describe how to configure SCRAM-SHA-512 authentication on th
 +
 NOTE: Secrets created by the User Operator may be used.
 +
-This can be done using `{cmdcli} create`:
+This can be done using `kubectl create`:
 [source,shell,subs="+quotes,attributes+"]
 echo -n '_<password>_' > _<my-password.txt>_
-{cmdcli} create secret generic _<my-secret>_ --from-file=_<my-password.txt>_
+kubectl create secret generic _<my-secret>_ --from-file=_<my-password.txt>_
 
 . Edit the `KafkaMirrorMaker.spec.consumer.authentication` property.
 For example:
@@ -49,9 +49,9 @@ spec:
 +
 . Create or update the resource.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _<your-file>_
+kubectl apply -f _<your-file>_
 
 Repeat the above steps for configuring SCRAM-SHA-512 authentication on the target Kafka cluster.
 In this case, the secret containing the certificate has to be configured in the `KafkaMirrorMaker.spec.producer.authentication` property.

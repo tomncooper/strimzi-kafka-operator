@@ -14,7 +14,7 @@ Remember to place your custom ConfigMap under the `log4j.properties` or `log4j2.
 +
 . Create or update the Kafka resource in {ProductPlatformName}.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_
 

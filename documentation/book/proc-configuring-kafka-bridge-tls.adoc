@@ -18,7 +18,7 @@
 NOTE: The secrets created by the Cluster Operator for Kafka cluster may be used directly.
 +
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} create secret generic _my-secret_ --from-file=_my-file.crt_
+kubectl create secret generic _my-secret_ --from-file=_my-file.crt_
 
 . Edit the `tls` property in the `KafkaBridge` resource.
 For example:
@@ -41,4 +41,4 @@ spec:
 . Create or update the resource.
 +
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_

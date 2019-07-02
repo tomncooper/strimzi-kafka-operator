@@ -38,10 +38,10 @@ spec:
 +
 . Create or update the resource.
 +
-Use `{cmdcli} apply`:
+Use `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_
 +
-Alternatively, use `{cmdcli} edit`:
+Alternatively, use `kubectl edit`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} edit _Resource_ _ClusterName_
+kubectl edit _Resource_ _ClusterName_

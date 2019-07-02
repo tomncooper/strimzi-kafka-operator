@@ -25,16 +25,16 @@ The `Secret` should contain the private key of the Certificate Authority under t
 
 . Deploy the User Operator.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 +
 [source,shell,subs="attributes+"]
-{cmdcli} apply -f install/user-operator
+kubectl apply -f install/user-operator
 
 . Verify that the User Operator has been deployed successfully.
-This can be done using `{cmdcli} describe`:
+This can be done using `kubectl describe`:
 +
 [source,shell,subs="attributes+"]
-{cmdcli} describe deployment strimzi-user-operator
+kubectl describe deployment strimzi-user-operator
 +
 The User Operator is deployed once the `Replicas:` entry shows `1 available`.
 +

@@ -37,8 +37,8 @@ spec:
 
 . Apply the new configuration to create or update the resource.
 +
-Use `{cmdcli} apply`:
+Use `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _kafka.yaml_
+kubectl apply -f _kafka.yaml_
 +
 where `_kafka.yaml_` is the YAML configuration file for the resource that you want to configure; for example, `kafka-persistent.yaml`.

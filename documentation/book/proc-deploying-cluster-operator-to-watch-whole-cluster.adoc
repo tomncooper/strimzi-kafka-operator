@@ -71,7 +71,7 @@ endif::Kubernetes[]
 +
 . Deploy the Cluster Operator to your {ProductPlatformName} cluster.
 +
-Use the `{cmdcli} apply` command:
+Use the `kubectl apply` command:
 +
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f install/cluster-operator -n _my-namespace_
+kubectl apply -f install/cluster-operator -n _my-namespace_

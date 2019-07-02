@@ -12,9 +12,9 @@
 
 . Deploy the producer.
 +
-Use `{cmdcli} run`:
+Use `kubectl run`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} run kafka-producer -ti --image={DockerKafka} --rm=true --restart=Never -- bin/kafka-console-producer.sh --broker-list _cluster-name_-kafka-bootstrap:9092 --topic _my-topic_
+kubectl run kafka-producer -ti --image={DockerKafka} --rm=true --restart=Never -- bin/kafka-console-producer.sh --broker-list _cluster-name_-kafka-bootstrap:9092 --topic _my-topic_
 
 . Type your message into the console where the producer is running.
 
@@ -22,8 +22,8 @@ Use `{cmdcli} run`:
 
 . Deploy the consumer.
 +
-Use `{cmdcli} run`:
+Use `kubectl run`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} run kafka-consumer -ti --image={DockerKafka} --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server _cluster-name_-kafka-bootstrap:9092 --topic _my-topic_ --from-beginning
+kubectl run kafka-consumer -ti --image={DockerKafka} --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server _cluster-name_-kafka-bootstrap:9092 --topic _my-topic_ --from-beginning
 
 . Confirm that you see the incoming messages in the consumer console.

@@ -33,9 +33,9 @@ spec:
 . Configure the Topic Operator using the fields described in xref:type-EntityTopicOperatorSpec-reference[].
 . Create or update the Kafka resource in {ProductPlatformName}.
 +
-Use `{cmdcli} apply`:
+Use `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_
 
 .Additional resources
 

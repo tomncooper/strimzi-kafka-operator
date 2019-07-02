@@ -17,9 +17,9 @@
 +
 NOTE: Secrets created by the User Operator may be used.
 +
-This can be done using `{cmdcli} create`:
+This can be done using `kubectl create`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} create secret generic _my-secret_ --from-file=_my-public.crt_ --from-file=_my-private.key_
+kubectl create secret generic _my-secret_ --from-file=_my-public.crt_ --from-file=_my-private.key_
 
 . Edit the `authentication` property in the `KafkaConnect` or `KafkaConnectS2I` resource.
 For example:
@@ -43,6 +43,6 @@ spec:
 +
 . Create or update the resource.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_

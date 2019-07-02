@@ -14,9 +14,9 @@
 
 . Label the nodes where {ProductName} components should be scheduled.
 +
-This can be done using `{cmdcli} label`:
+This can be done using `kubectl label`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} label node _your-node_ node-type=fast-network
+kubectl label node _your-node_ node-type=fast-network
 +
 Alternatively, some of the existing labels might be reused.
 . Edit the `affinity` property in the resource specifying the cluster deployment.
@@ -47,6 +47,6 @@ spec:
 
 . Create or update the resource.
 +
-This can be done using `{cmdcli} apply`:
+This can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f _your-file_
+kubectl apply -f _your-file_

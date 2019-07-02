@@ -13,9 +13,9 @@
 
 . Create the `strimzi-admin` cluster role in {ProductPlatformName}.
 +
-Use `{cmdcli} apply`:
+Use `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} apply -f install/strimzi-admin
+kubectl apply -f install/strimzi-admin
 
 . Assign the `strimzi-admin` `ClusterRole` to one or more existing users in the {ProductPlatformName} cluster.
 +

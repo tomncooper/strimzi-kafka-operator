@@ -24,7 +24,7 @@ IMPORTANT: The `_<cluster-name>_-cluster-ca-cert` `Secret` will contain more tha
 . Extract the cluster CA certificate from the generated `_<cluster-name>_-cluster-ca-cert` `Secret`.
 +
 [source,shell,subs="+quotes"]
-{cmdcli} get secret _<cluster-name>_-cluster-ca-cert -o jsonpath='{.data.ca\.crt}' | base64 -d > ca.crt
+kubectl get secret _<cluster-name>_-cluster-ca-cert -o jsonpath='{.data.ca\.crt}' | base64 -d > ca.crt
 
 . The Kafka client has to be configured to trust certificates signed by this CA.
 For the Java-based Kafka Producer, Consumer, and Streams APIs, you can do this by importing the CA certificates into the JVM's truststore using the following `keytool` command:

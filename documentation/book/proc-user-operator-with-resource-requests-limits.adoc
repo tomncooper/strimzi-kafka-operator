@@ -15,7 +15,7 @@ You can allocate resources, such as CPU and memory, to the User Operator and set
 
 . Update the Kafka cluster configuration in an editor, as required:
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} edit kafka my-cluster
+kubectl edit kafka my-cluster
 
 
 . In the `spec.entityOperator.userOperator.resources` property in the `Kafka` resource, set the resource requests and limits for the User Operator.

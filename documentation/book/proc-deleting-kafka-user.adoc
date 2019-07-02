@@ -17,10 +17,10 @@ This procedure describes how to delete a Kafka user created with `KafkaUser` {Pr
 
 * Delete the `KafkaUser` resource in {ProductPlatformName}.
 +
-This can be done using `{cmdcli} delete`:
+This can be done using `kubectl delete`:
 +
 [source,shell,subs="+quotes,attributes+"]
-{cmdcli} delete kafkauser _your-user-name_
+kubectl delete kafkauser _your-user-name_
 
 .Additional resources
 
