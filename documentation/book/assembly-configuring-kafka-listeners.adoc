@@ -25,17 +25,13 @@ include::con-kafka-listeners.adoc[leveloffset=+1]
 
 include::proc-configuring-kafka-listeners.adoc[leveloffset=+1]
 
-ifdef::OpenShift[]
-include::proc-accessing-kafka-using-routes.adoc[leveloffset=+1]
-endif::[]
-
 include::proc-accessing-kafka-using-loadbalancers.adoc[leveloffset=+1]
 
 include::proc-accessing-kafka-using-nodeports.adoc[leveloffset=+1]
 
-ifdef::Kubernetes[]
 include::proc-accessing-kafka-using-ingress.adoc[leveloffset=+1]
-endif::Kubernetes[]
+
+include::proc-accessing-kafka-using-routes.adoc[leveloffset=+1]
 
 include::proc-restricting-access-to-listeners-using-network-policies.adoc[leveloffset=+1]
 

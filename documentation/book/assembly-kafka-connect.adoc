@@ -32,15 +32,12 @@ m¦FileStreamSinkConnector
 
 |===
 
-In {ProductName}, you can use the Cluster Operator to deploy a Kafka Connect
-ifdef::OpenShift[ or Kafka Connect Source-2-Image (S2I) cluster ]
-to your Kubernetes cluster.
+In {ProductName}, you can use the Cluster Operator to deploy a Kafka Connect to your Kubernetes cluster.
+OpenShift also supports Kafka Connect Source-2-Image (S2I) clusters.
 
 A Kafka Connect cluster is implemented as a `Deployment` with a configurable number of workers. The Kafka Connect REST API is available on port 8083, as the `<connect-cluster-name>-connect-api` service.
 
-ifdef::OpenShift[]
-For more information on deploying a Kafka Connect S2I cluster, see xref:using-openshift-s2i-create-image-str[Creating a container image using OpenShift builds and Source-to-Image].
-endif::OpenShift[]
+For more information on deploying a Kafka Connect S2I cluster on OpenShift, see xref:using-openshift-s2i-create-image-str[Creating a container image using OpenShift builds and Source-to-Image].
 
 include::proc-deploying-kafka-connect.adoc[leveloffset=+1]
 

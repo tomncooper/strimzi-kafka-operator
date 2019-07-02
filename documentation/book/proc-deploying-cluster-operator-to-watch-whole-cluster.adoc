@@ -6,11 +6,6 @@
 [id='deploying-cluster-operator-to-watch-whole-cluster-{context}']
 = Deploying the Cluster Operator to watch all namespaces
 
-ifdef::OpenShift+Kubernetes[]
-NOTE: In OpenShift a _project_ is a special kind of Kubernetes namespace.
-In this procedure the term namespace is used to refer to both.
-endif::[]
-
 You can configure the Cluster Operator to watch {ProductName} resources across all namespaces in your Kubernetes cluster. When running in this mode, the Cluster Operator automatically manages clusters in any new namespaces that are created.
 
 .Prerequisites
@@ -46,19 +41,7 @@ spec:
 
 . Create `ClusterRoleBindings` that grant cluster-wide access to all namespaces to the Cluster Operator.
 +
-ifdef::OpenShift[]
-On OpenShift, use the `oc adm policy` command:
-+
-[source,shell,subs="+quotes,attributes+"]
-oc adm policy add-cluster-role-to-user strimzi-cluster-operator-namespaced --serviceaccount strimzi-cluster-operator -n _my-namespace_
-oc adm policy add-cluster-role-to-user strimzi-entity-operator --serviceaccount strimzi-cluster-operator -n _my-namespace_
-oc adm policy add-cluster-role-to-user strimzi-topic-operator --serviceaccount strimzi-cluster-operator -n _my-namespace_
-+
-Replace `_my-project_` with the project in which you want to install the Cluster Operator.
-endif::OpenShift[]
-+
-ifdef::Kubernetes[]
-On Kubernetes, use the `kubectl create` command:
+Use the `kubectl create clusterrolebinding` command:
 +
 [source,shell,subs="+quotes,attributes+"]
 kubectl create clusterrolebinding strimzi-cluster-operator-namespaced --clusterrole=strimzi-cluster-operator-namespaced --serviceaccount _my-namespace_:strimzi-cluster-operator
@@ -66,9 +49,7 @@ kubectl create clusterrolebinding strimzi-cluster-operator-entity-operator-deleg
 kubectl create clusterrolebinding strimzi-cluster-operator-topic-operator-delegation --clusterrole=strimzi-topic-operator --serviceaccount _my-namespace_:strimzi-cluster-operator
 +
 Replace `_my-namespace_` with the namespace in which you want to install the Cluster Operator.
-endif::Kubernetes[]
-// end
-+
+
 . Deploy the Cluster Operator to your Kubernetes cluster.
 +
 Use the `kubectl apply` command:

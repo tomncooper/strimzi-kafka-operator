@@ -5,10 +5,6 @@
 [id='deploying-kafka-mirror-maker-{context}']
 = Deploying Kafka Mirror Maker
 
-ifdef::OpenShift[]
-On OpenShift, Kafka Mirror Maker is provided in the form of a template. It can be deployed from the template using the command-line or through the OpenShift console.
-endif::[]
-
 .Prerequisites
 
 * Before deploying Kafka Mirror Maker, the Cluster Operator must be deployed.

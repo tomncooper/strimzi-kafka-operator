@@ -23,6 +23,4 @@ kubectl apply -f examples/kafka-connect/kafka-connect.yaml
 
 .Additional resources
 * xref:assembly-deployment-configuration-kafka-connect-str[Kafka Connect cluster configuration]
-ifdef::OpenShift[]
 * xref:assembly-deployment-configuration-kafka-connect-s2i-str[Kafka Connect cluster with Source2Image support]
-endif::[]

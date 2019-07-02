@@ -116,8 +116,6 @@
 :KubernetesVersion: 1.9 and later
 
 // Section enablers
-:Kubernetes:
-:OpenShift:
 :Helm:
 :OperatorHubio:
 :StrimziUpgrades:
@@ -125,3 +123,5 @@
 :MetricsAppendix:
 :Downloading:
 :SecurityImg:
+
+:NoteOpenShiftOnly: NOTE: This feature is only available on OpenShift.

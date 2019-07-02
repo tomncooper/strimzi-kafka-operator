@@ -7,9 +7,7 @@
 
 .Prerequisites
 
-ifdef::OpenShift[]
-* A user with `cluster-admin` role needs to be used, for example, `system:admin`.
-endif::[]
+* On OpenShift a user with `cluster-admin` role needs to be used, for example, `system:admin`.
 * Modify the installation files according to the namespace the Cluster Operator is going to be installed in.
 +
 include::frag-cluster-operator-namespace-sed.adoc[]
