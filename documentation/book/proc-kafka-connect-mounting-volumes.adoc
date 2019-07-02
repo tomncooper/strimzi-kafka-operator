@@ -6,7 +6,7 @@
 
 = Mounting Secrets as volumes
 
-You can create {_aProductPlatformName} Secret, mount it as a volume to Kafka Connect, and then use it to configure a Kafka Connect connector.
+You can create a Kubernetes Secret, mount it as a volume to Kafka Connect, and then use it to configure a Kafka Connect connector.
 
 .Prerequisites
 

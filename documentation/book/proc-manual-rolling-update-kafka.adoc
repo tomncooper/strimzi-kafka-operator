@@ -5,7 +5,7 @@
 [id='proc-manual-rolling-update-kafka-{context}']
 = Performing a rolling update of a Kafka cluster
 
-This procedure describes how to manually trigger a rolling update of an existing Kafka cluster by using {_aProductPlatformName} annotation.
+This procedure describes how to manually trigger a rolling update of an existing Kafka cluster by using a Kubernetes annotation.
 
 .Prerequisites
 

@@ -5,7 +5,7 @@
 [id='proc-manual-delete-pod-pvc-zookeeper-{context}']
 = Deleting Zookeeper nodes manually
 
-This procedure describes how to delete an existing Zookeeper node by using {_aProductPlatformName} annotation.
+This procedure describes how to delete an existing Zookeeper node by using a Kubernetes annotation.
 Deleting a Zookeeper node consists of deleting both the `Pod` on which Zookeeper is running and the related `PersistentVolumeClaim` (if the cluster was deployed with persistent storage).
 After deletion, the `Pod` and its related `PersistentVolumeClaim` are recreated automatically.
 

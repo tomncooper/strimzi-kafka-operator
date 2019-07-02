@@ -37,7 +37,7 @@ listeners:
 
 == External listener
 
-The external listener is used to connect to a Kafka cluster from outside of {_aProductPlatformName} environment.
+The external listener is used to connect to a Kafka cluster from outside of a Kubernetes environment.
 {ProductName} supports the following types of external listener:
 
 ifdef::OpenShift[]
