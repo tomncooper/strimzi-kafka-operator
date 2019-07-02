@@ -310,12 +310,12 @@ public class MirrorMakerST extends MessagingBaseST {
         createTestClassResources();
         applyRoleBindings(NAMESPACE);
         // 050-Deployment
-        testClassResources.clusterOperator(NAMESPACE).done();
+        getTestClassResources().clusterOperator(NAMESPACE).done();
     }
 
     @AfterAll
     void teardownEnvironment() {
-        testClassResources.deleteResources();
+        getTestClassResources().deleteResources();
         teardownEnvForOperator();
     }
 

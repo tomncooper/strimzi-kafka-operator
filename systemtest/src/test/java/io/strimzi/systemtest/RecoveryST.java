@@ -194,13 +194,13 @@ class RecoveryST extends AbstractST {
         createTestClassResources();
         applyRoleBindings(NAMESPACE);
         // 050-Deployment
-        testClassResources.clusterOperator(NAMESPACE).done();
+        getTestClassResources().clusterOperator(NAMESPACE).done();
 
         deployTestSpecificResources();
     }
 
     void deployTestSpecificResources() {
-        testClassResources.kafkaEphemeral(CLUSTER_NAME, 1).done();
+        getTestClassResources().kafkaEphemeral(CLUSTER_NAME, 1).done();
     }
 
     @Override
