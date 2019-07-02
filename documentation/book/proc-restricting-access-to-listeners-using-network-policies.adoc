@@ -9,7 +9,7 @@ You can restrict access to a listener to only selected applications by using the
 
 .Prerequisites
 
-* {AProductPlatformName} cluster with support for Ingress NetworkPolicies.
+* A Kubernetes cluster with support for Ingress NetworkPolicies.
 * The Cluster Operator is running.
 
 .Procedure

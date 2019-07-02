@@ -7,7 +7,7 @@
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator with a `listener` configured for SCRAM-SHA-512 authentication
 * Username to be used for authentication
 * If they exist, the name of the `Secret` with the password used for authentication, and the key under which it is stored in the `Secret`

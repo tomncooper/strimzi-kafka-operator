@@ -7,7 +7,7 @@
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator
 * If they exist, the name of the `Secret` for the certificate used for TLS Server Authentication, and the key under which the certificate is stored in the `Secret`
 

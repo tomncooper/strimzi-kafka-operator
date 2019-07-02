@@ -9,7 +9,7 @@ You can configure a maintenance time window for rolling updates triggered by sup
 
 .Prerequisites
 
-* {AProductPlatformName} cluster.
+* A Kubernetes cluster.
 * The Cluster Operator is running.
 
 .Procedure

@@ -9,7 +9,7 @@ The number of consumer streams can be configured using the `KafkaMirrorMaker.spe
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator
 
 .Procedure

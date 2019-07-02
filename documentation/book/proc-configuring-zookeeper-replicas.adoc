@@ -7,7 +7,7 @@
 
 .Prerequisites
 
-* {AProductPlatformName} cluster is available.
+* A Kubernetes cluster is available.
 * The Cluster Operator is running.
 
 .Procedure

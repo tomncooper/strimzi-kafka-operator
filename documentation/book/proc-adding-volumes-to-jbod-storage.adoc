@@ -12,7 +12,7 @@ NOTE: When adding a new volume under an `id` which was already used in the past 
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator
 * A Kafka cluster with JBOD storage
 

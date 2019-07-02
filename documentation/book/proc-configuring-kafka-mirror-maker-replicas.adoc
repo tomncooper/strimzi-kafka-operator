@@ -9,7 +9,7 @@ The number of Kafka Mirror Maker replicas can be configured using the `replicas`
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator
 
 .Procedure

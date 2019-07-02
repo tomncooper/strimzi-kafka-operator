@@ -9,7 +9,7 @@ Specify the list topics that have to be mirrored by the Kafka Mirror Maker from 
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator
 
 .Procedure

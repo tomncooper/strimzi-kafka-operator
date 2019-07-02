@@ -18,7 +18,7 @@ In situations where the configured image is not compatible with {ProductName} im
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator
 
 .Procedure

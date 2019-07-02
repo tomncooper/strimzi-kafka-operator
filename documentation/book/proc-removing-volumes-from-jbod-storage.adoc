@@ -13,7 +13,7 @@ IMPORTANT: To avoid data loss, you have to move all partitions before removing t
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator
 * A Kafka cluster with JBOD storage with two or more volumes
 

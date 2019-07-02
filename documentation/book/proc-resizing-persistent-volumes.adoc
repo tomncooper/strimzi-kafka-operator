@@ -13,7 +13,7 @@ Decreasing the size of persistent volumes is not currently supported in {Product
 
 .Prerequisites
 
-* {AProductPlatformName} cluster with support for volume resizing.
+* A Kubernetes cluster with support for volume resizing.
 * The Cluster Operator is running.
 * A Kafka cluster using persistent volumes created using a storage class that supports volume expansion.
 

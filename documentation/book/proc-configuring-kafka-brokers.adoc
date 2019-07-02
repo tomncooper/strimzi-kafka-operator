@@ -9,7 +9,7 @@ You can configure an existing Kafka broker, or create a new Kafka broker with a 
 
 .Prerequisites
 
-* {AProductPlatformName} cluster is available.
+* A Kubernetes cluster is available.
 * The Cluster Operator is running.
 
 .Procedure

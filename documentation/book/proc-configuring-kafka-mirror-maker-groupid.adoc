@@ -9,7 +9,7 @@ The consumer group identifier can be configured in the `KafkaMirrorMaker.spec.co
 
 .Prerequisites
 
-* {AProductPlatformName} cluster
+* A Kubernetes cluster
 * A running Cluster Operator
 
 .Procedure
