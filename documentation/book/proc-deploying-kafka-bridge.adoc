@@ -9,7 +9,7 @@ You can deploy a Kafka Bridge cluster to your {ProductPlatformName} cluster by u
 
 .Prerequisites
 
-* xref:deploying-cluster-operator-str[Deploying the Cluster Operator to {KubernetesName}]
+* xref:deploying-cluster-operator-str[Deploying the Cluster Operator to Kubernetes]
 
 .Procedure
 

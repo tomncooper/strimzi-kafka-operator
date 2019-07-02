@@ -152,9 +152,9 @@ listeners:
 For more information on using node ports to access Kafka, see xref:proc-accessing-kafka-using-nodeports-{context}[].
 
 ifdef::Kubernetes[]
-=== Exposing Kafka using {KubernetesName} `Ingress`
+=== Exposing Kafka using Kubernetes `Ingress`
 
-An external listener of type `ingress` exposes Kafka by using {KubernetesName} `Ingress` and the {NginxIngressController}.
+An external listener of type `ingress` exposes Kafka by using Kubernetes `Ingress` and the {NginxIngressController}.
 A dedicated `Ingress` resource is created for every Kafka broker pod.
 An additional `Ingress` resource is created to serve as a Kafka bootstrap address.
 Kafka clients can use these `Ingress` resources to connect to Kafka on port 443.
@@ -397,7 +397,7 @@ In the above example:
 The application pods must be running in the same namespace as the Kafka broker.
 * Only application pods running in namespaces matching the labels `project: myproject` and `project: myproject2` can connect to the `tls` listener.
 
-The syntax of the `networkPolicyPeers` field is the same as the `from` field in the `NetworkPolicy` resource in {KubernetesName}.
+The syntax of the `networkPolicyPeers` field is the same as the `from` field in the `NetworkPolicy` resource in Kubernetes.
 For more information about the schema, see {K8sNetworkPolicyPeerAPI} and the xref:type-KafkaListeners-reference[`KafkaListeners` schema reference].
 
 NOTE: Your configuration of {ProductPlatformName} must support Ingress NetworkPolicies in order to use network policies in {ProductName}.

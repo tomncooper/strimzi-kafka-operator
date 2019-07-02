@@ -20,7 +20,7 @@ kubectl apply -f install/strimzi-admin
 . Assign the `strimzi-admin` `ClusterRole` to one or more existing users in the {ProductPlatformName} cluster.
 +
 ifdef::Kubernetes[]
-On {KubernetesName}, use `kubectl create`:
+On Kubernetes, use `kubectl create`:
 [source,shell,subs=+quotes]
 kubectl create clusterrolebinding strimzi-admin --clusterrole=strimzi-admin --user=_user1_ --user=_user2_
 +

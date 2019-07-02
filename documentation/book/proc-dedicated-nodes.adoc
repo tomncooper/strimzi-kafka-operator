@@ -17,7 +17,7 @@
 . Set the taints on the selected nodes:
 +
 ifdef::Kubernetes[]
-On {KubernetesName} this can be done using `kubectl taint`:
+On Kubernetes this can be done using `kubectl taint`:
 [source,shell,subs=+quotes]
 kubectl taint node _your-node_ dedicated=Kafka:NoSchedule
 +

@@ -10,9 +10,9 @@ After deployment, the {ProductName} Kafka Bridge can only be accessed by applica
 
 If you want to make the Kafka Bridge accessible to applications running outside of the {ProductPlatformName} cluster, you can expose it manually by using one of the following features:
 
-* {KubernetesName} Services of types LoadBalancer or NodePort
+* Kubernetes Services of types LoadBalancer or NodePort
 
-* {KubernetesName} Ingress resources
+* Kubernetes Ingress resources
 
 * {OpenShiftName} Routes
 

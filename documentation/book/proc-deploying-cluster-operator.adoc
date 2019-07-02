@@ -3,7 +3,7 @@
 // assembly-cluster-operator.adoc
 
 [id='deploying-cluster-operator-{context}']
-= Deploying the Cluster Operator to {KubernetesName}
+= Deploying the Cluster Operator to Kubernetes
 
 .Prerequisites
 

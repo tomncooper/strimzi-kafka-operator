@@ -45,6 +45,6 @@ spec:
 +
 . Create or update the resource.
 +
-On {KubernetesName} this can be done using `kubectl apply`:
+On Kubernetes this can be done using `kubectl apply`:
 [source,shell,subs="+quotes,attributes+"]
 kubectl apply -f _your-file_

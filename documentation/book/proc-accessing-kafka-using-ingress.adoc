@@ -3,13 +3,13 @@
 // assembly-configuring-kafka-listeners.adoc
 
 [id='proc-accessing-kafka-using-ingress-{context}']
-= Accessing Kafka using {KubernetesName} ingress
+= Accessing Kafka using Kubernetes ingress
 
-This procedure shows how to access {ProductName} Kafka clusters from outside of {KubernetesName} using Ingress.
+This procedure shows how to access {ProductName} Kafka clusters from outside of Kubernetes using Ingress.
 
 .Prerequisites
 
-* An {KubernetesName} cluster
+* An Kubernetes cluster
 * Deployed {NginxIngressController} with TLS passthrough enabled
 * A running Cluster Operator
 
