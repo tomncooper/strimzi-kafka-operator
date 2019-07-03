@@ -246,6 +246,7 @@ public class OperatorAssignedKafkaImpl extends BaseKafkaImpl {
         return verifyLineParser.inProgress == 0;
     }
 
+    @SuppressFBWarnings("NP_BOOLEAN_RETURN_NULL")
     private void executeReassignment(File reassignmentJsonFile, String zookeeper, Long throttle) throws IOException, InterruptedException {
         List<String> executeArgs = new ArrayList<>();
         addJavaArgs(executeArgs);
@@ -264,8 +265,10 @@ public class OperatorAssignedKafkaImpl extends BaseKafkaImpl {
                     || line.contains("There is an existing assignment running")
                     || line.contains("Failed to reassign partitions")) {
                 throw new TransientOperatorException("Reassigment failed: " + line);
+            } else if (line.contains("Successfully started reassignment of partitions.")) {
+                return true;
             } else {
-                return line.contains("Successfully started reassignment of partitions.");
+                return null;
             }
         }))) {
             throw new TransientOperatorException("Reassignment execution neither failed nor finished");
