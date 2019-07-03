@@ -112,8 +112,8 @@ public abstract class AbstractST extends BaseITST implements TestSeparator {
     public static final String TEST_LOG_DIR = Environment.TEST_LOG_DIR;
 
     protected Resources testMethodResources;
-    protected static Resources testClassResources;
-    protected static String operationID;
+    private static Resources testClassResources;
+    private static String operationID;
     Random rng = new Random();
 
     protected HelmClient helmClient() {
@@ -436,8 +436,20 @@ public abstract class AbstractST extends BaseITST implements TestSeparator {
         return testMethodResources;
     }
 
-    public Resources testClassResources() {
+    public static String getOperationID() {
+        return operationID;
+    }
+
+    public static void setOperationID(String operationID) {
+        AbstractST.operationID = operationID;
+    }
+
+    public static Resources getTestClassResources() {
         return testClassResources;
+    }
+
+    public static void setTestClassResources(Resources testClassResources) {
+        AbstractST.testClassResources = testClassResources;
     }
 
     String startTimeMeasuring(Operation operation) {
@@ -508,7 +520,7 @@ public abstract class AbstractST extends BaseITST implements TestSeparator {
         createNamespaces(coNamespace, bindingsNamespaces);
         applyClusterOperatorInstallFiles();
 
-        testClassResources = new Resources(kubeClient());
+        setTestClassResources(new Resources(kubeClient()));
 
         applyRoleBindings(coNamespace, bindingsNamespaces);
         // 050-Deployment
