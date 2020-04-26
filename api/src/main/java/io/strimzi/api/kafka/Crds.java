@@ -18,6 +18,7 @@ import io.fabric8.kubernetes.internal.KubernetesDeserializer;
 import io.strimzi.api.kafka.model.Constants;
 import io.strimzi.api.kafka.model.DoneableKafka;
 import io.strimzi.api.kafka.model.DoneableKafkaBridge;
+import io.strimzi.api.kafka.model.DoneableKafkaClusterRebalance;
 import io.strimzi.api.kafka.model.DoneableKafkaConnect;
 import io.strimzi.api.kafka.model.DoneableKafkaConnectS2I;
 import io.strimzi.api.kafka.model.DoneableKafkaMirrorMaker;
@@ -27,6 +28,7 @@ import io.strimzi.api.kafka.model.DoneableKafkaUser;
 import io.strimzi.api.kafka.model.DoneableKafkaConnector;
 import io.strimzi.api.kafka.model.KafkaBridge;
 import io.strimzi.api.kafka.model.Kafka;
+import io.strimzi.api.kafka.model.KafkaClusterRebalance;
 import io.strimzi.api.kafka.model.KafkaConnect;
 import io.strimzi.api.kafka.model.KafkaConnectS2I;
 import io.strimzi.api.kafka.model.KafkaMirrorMaker;
@@ -56,7 +58,8 @@ public class Crds {
         KafkaMirrorMaker.class,
         KafkaBridge.class,
         KafkaConnector.class,
-        KafkaMirrorMaker2.class
+        KafkaMirrorMaker2.class,
+        KafkaClusterRebalance.class
     };
 
     private Crds() {
@@ -93,6 +96,8 @@ public class Crds {
             version = KafkaConnector.VERSIONS.get(0);
         } else if (cls.equals(KafkaMirrorMaker2.class)) {
             version = KafkaMirrorMaker2.VERSIONS.get(0);
+        } else if (cls.equals(KafkaClusterRebalance.class)) {
+            version = KafkaClusterRebalance.VERSIONS.get(0);
         } else {
             throw new RuntimeException();
         }
@@ -100,7 +105,7 @@ public class Crds {
         return crd(cls, version);
     }
 
-    @SuppressWarnings("checkstyle:JavaNCSS")
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:JavaNCSS"})
     private static CustomResourceDefinition crd(Class<? extends CustomResource> cls, String version) {
         String scope, crdApiVersion, plural, singular, group, kind, listKind;
         CustomResourceSubresourceStatus status = null;
@@ -211,7 +216,19 @@ public class Crds {
             status = new CustomResourceSubresourceStatus();
             if (!KafkaMirrorMaker2.VERSIONS.contains(version)) {
                 throw new RuntimeException();
-            }                
+            }
+        } else if (cls.equals(KafkaClusterRebalance.class)) {
+            scope = KafkaClusterRebalance.SCOPE;
+            crdApiVersion = KafkaClusterRebalance.CRD_API_VERSION;
+            plural = KafkaClusterRebalance.RESOURCE_PLURAL;
+            singular = KafkaClusterRebalance.RESOURCE_SINGULAR;
+            group = KafkaClusterRebalance.RESOURCE_GROUP;
+            kind = KafkaClusterRebalance.RESOURCE_KIND;
+            listKind = KafkaClusterRebalance.RESOURCE_LIST_KIND;
+            status = new CustomResourceSubresourceStatus();
+            if (!KafkaClusterRebalance.VERSIONS.contains(version)) {
+                throw new RuntimeException();
+            }
         } else {
             throw new RuntimeException();
         }
@@ -313,6 +330,14 @@ public class Crds {
 
     public static MixedOperation<KafkaMirrorMaker2, KafkaMirrorMaker2List, DoneableKafkaMirrorMaker2, Resource<KafkaMirrorMaker2, DoneableKafkaMirrorMaker2>> kafkaMirrorMaker2Operation(KubernetesClient client) {
         return client.customResources(kafkaMirrorMaker2(), KafkaMirrorMaker2.class, KafkaMirrorMaker2List.class, DoneableKafkaMirrorMaker2.class);
+    }
+
+    public static CustomResourceDefinition kafkaClusterRebalance() {
+        return crd(KafkaClusterRebalance.class);
+    }
+
+    public static MixedOperation<KafkaClusterRebalance, KafkaClusterRebalanceList, DoneableKafkaClusterRebalance, Resource<KafkaClusterRebalance, DoneableKafkaClusterRebalance>> kafkaClusterRebalanceOperation(KubernetesClient client) {
+        return client.customResources(kafkaClusterRebalance(), KafkaClusterRebalance.class, KafkaClusterRebalanceList.class, DoneableKafkaClusterRebalance.class);
     }
 
     public static <T extends CustomResource, L extends CustomResourceList<T>, D extends Doneable<T>> MixedOperation<T, L, D, Resource<T, D>>

@@ -81,6 +81,8 @@ public final class TestUtils {
 
     public static final String CRD_KAFKA_CONNECTOR = "../install/cluster-operator/047-Crd-kafkaconnector.yaml";
 
+    public static final String CRD_KAFKA_CLUSTER_REBALANCE = "../install/cluster-operator/049-Crd-kafkaclusterrebalance.yaml";
+
     private TestUtils() {
         // All static methods
     }
