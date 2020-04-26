@@ -29,18 +29,22 @@ public class StatusUtils {
     }
 
     public static Condition buildConditionFromException(Throwable error) {
+        return buildCondition(error == null ? "Ready" : "NotReady", error);
+    }
+
+    public static Condition buildCondition(String type, Throwable error) {
         Condition readyCondition;
         if (error == null) {
             readyCondition = new ConditionBuilder()
                     .withLastTransitionTime(iso8601Now())
                     .withType("Ready")
-                    .withStatus("True")
+                    .withStatus(type)
                     .build();
         } else {
             readyCondition = new ConditionBuilder()
                     .withLastTransitionTime(iso8601Now())
                     .withType("NotReady")
-                    .withStatus("True")
+                    .withStatus(type)
                     .withReason(error.getClass().getSimpleName())
                     .withMessage(error.getMessage())
                     .build();
@@ -68,6 +72,14 @@ public class StatusUtils {
         }
         Condition readyCondition = StatusUtils.buildConditionFromException(error);
         status.setConditions(Collections.singletonList(readyCondition));
+    }
+
+    public static <R extends CustomResource, S extends Status> void setStatusConditionAndObservedGeneration(R resource, S status, String type) {
+        if (resource.getMetadata().getGeneration() != null)    {
+            status.setObservedGeneration(resource.getMetadata().getGeneration());
+        }
+        Condition condition = StatusUtils.buildCondition(type, null);
+        status.setConditions(Collections.singletonList(condition));
     }
 
     public static <R extends CustomResource> boolean isResourceV1alpha1(R resource) {
