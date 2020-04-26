@@ -23,7 +23,7 @@ public class CruiseControlConfiguration extends AbstractConfiguration {
      * A list of case insensitive goals that Cruise Control supports in the order of priority.
      * The high priority goals will be executed first.
      */
-    private static final String DEFAULT_GOALS = "com.linkedin.kafka.cruisecontrol.analyzer.goals.RackAwareGoal," +
+    private static final String GOALS = "com.linkedin.kafka.cruisecontrol.analyzer.goals.RackAwareGoal," +
         "com.linkedin.kafka.cruisecontrol.analyzer.goals.ReplicaCapacityGoal," +
         "com.linkedin.kafka.cruisecontrol.analyzer.goals.DiskCapacityGoal," +
         "com.linkedin.kafka.cruisecontrol.analyzer.goals.NetworkInboundCapacityGoal," +
@@ -55,8 +55,8 @@ public class CruiseControlConfiguration extends AbstractConfiguration {
         CC_DEFAULT_PROPERTIES_MAP.put("broker.metrics.window.ms", Integer.toString(300_000));
         CC_DEFAULT_PROPERTIES_MAP.put("num.broker.metrics.windows", "20");
         CC_DEFAULT_PROPERTIES_MAP.put("completed.user.task.retention.time.ms", Long.toString(TimeUnit.DAYS.toMillis(1)));
-        CC_DEFAULT_PROPERTIES_MAP.put("default.goals", DEFAULT_GOALS);
-        CC_DEFAULT_PROPERTIES_MAP.put("goals", DEFAULT_GOALS);
+        CC_DEFAULT_PROPERTIES_MAP.put("default.goals", GOALS);
+        CC_DEFAULT_PROPERTIES_MAP.put("goals", GOALS);
 
         FORBIDDEN_OPTIONS = asList(CruiseControlSpec.FORBIDDEN_PREFIXES.split(", *"));
         EXCEPTIONS = asList(CruiseControlSpec.FORBIDDEN_PREFIX_EXCEPTIONS.split(", *"));

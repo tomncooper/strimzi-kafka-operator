@@ -10,10 +10,12 @@ public class CruiseControlResponse {
 
     private String userTaskId;
     private JsonObject json;
+    private boolean notEnoughDataForProposal;
 
     CruiseControlResponse(String userTaskId, JsonObject json) {
         this.userTaskId = userTaskId;
         this.json = json;
+        this.notEnoughDataForProposal = false;
     }
 
     public String getUserTaskId() {
@@ -30,6 +32,14 @@ public class CruiseControlResponse {
 
     public String toString() {
         return "User Task ID: " + userTaskId + " JSON: " + json.toString();
+    }
+
+    public boolean thereIsNotEnoughDataForProposal() {
+        return this.notEnoughDataForProposal;
+    }
+
+    public void setNotEnoughDataForProposal(boolean notEnoughData) {
+        this.notEnoughDataForProposal = notEnoughData;
     }
 
 }

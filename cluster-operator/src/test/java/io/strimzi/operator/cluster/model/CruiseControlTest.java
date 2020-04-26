@@ -723,6 +723,41 @@ public class CruiseControlTest {
         assertThat(rules.contains(clusterOperatorPeer), is(true));
     }
 
+
+    @Test
+    public void testGoalsCheck() {
+
+        String customGoals = "com.linkedin.kafka.cruisecontrol.analyzer.goals.RackAwareGoal," +
+                "com.linkedin.kafka.cruisecontrol.analyzer.goals.ReplicaCapacityGoal";
+
+        Map<String, Object> customGoalConfig = (Map) configuration.asOrderedProperties().asMap();
+        customGoalConfig.put(CruiseControl.CRUISE_CONTROL_DEFAULT_GOALS_CONFIG_KEY, customGoals);
+
+        CruiseControlSpec ccSpecWithCustomGoals = new CruiseControlSpecBuilder()
+                .withImage(ccImage)
+                .withConfig(customGoalConfig)
+                .build();
+
+        Kafka resourceWithCustomGoals =
+                new KafkaBuilder(ResourceUtils.createKafkaCluster(namespace, cluster, replicas, image, healthDelay, healthTimeout))
+                        .editSpec()
+                            .editKafka()
+                                .withVersion(version)
+                                .withConfig(kafkaConfig)
+                            .endKafka()
+                            .withCruiseControl(ccSpecWithCustomGoals)
+                        .endSpec()
+                        .build();
+
+        CruiseControl cruiseControlWithCustomGoals = CruiseControl.fromCrd(resourceWithCustomGoals, VERSIONS);
+
+        String anomalyDetectionGoals =  cruiseControlWithCustomGoals
+                .getConfiguration().asOrderedProperties().asMap()
+                .get(CruiseControl.CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY);
+
+        assertThat(anomalyDetectionGoals, is(customGoals));
+    }
+
     @AfterAll
     public static void cleanUp() {
         ResourceUtils.cleanUpTemporaryTLSFiles();

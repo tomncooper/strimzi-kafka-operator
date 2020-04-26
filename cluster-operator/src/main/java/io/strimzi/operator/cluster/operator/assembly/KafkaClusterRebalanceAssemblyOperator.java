@@ -637,28 +637,18 @@ public class KafkaClusterRebalanceAssemblyOperator
         State inprogress = dryrun ? State.PendingProposal : State.Rebalancing;
         return apiClient.rebalance(host, CruiseControl.REST_API_PORT, rebalanceOptionsBuilder.build())
                 .map(response -> {
-                    // Question: Should we inspect the JSON and check for the "summary" key?
-                    if (response.getJson() != null) {
-                        return new KafkaClusterRebalanceStatusBuilder()
-                                .withOptimizationResult(response.getJson().getJsonObject("summary").getMap())
-                                .addNewCondition().withNewType(ready.toString()).endCondition().build();
-                    } else {
-                        // This branch is for the situation where Cruise Control is still preparing a Rebalance Proposal. This would only happen if one has
-                        // not been generated yet, for the default goals (i.e. we are close to the CC server start up) or the user has requested a rebalance
-                        // with custom goals that is taking some time to compute.
-
-                        // Question: Will this branch ever be reached? If there is no JSON in the response from the API then the client.rebalance() request
-                        // will fail when it calls buffer.toJsonObject(), so an exception will be thrown before this branch is hit.
-
-                        // I think that what will happen if the proposal is not ready, is that CC will simply respond with empty JSON (possibly without the
-                        // "summary" key) and we will have to check back later. I need to verify this behaviour.
-
-                        // Maybe the best option, if the summary key is not there, is to poll the user tasks endpoint until there is a "result" containing
-                        // the summary?
-                        // TODO: Test CC behaviour to see what is returned if a proposal is not ready
+                    if (response.thereIsNotEnoughDataForProposal()) {
                         return new KafkaClusterRebalanceStatusBuilder()
                                 .withNewSessionId(response.getUserTaskId())
                                 .addNewCondition().withNewType(inprogress.toString()).endCondition().build();
+                    } else {
+                        if (response.getJson().containsKey("summary")) {
+                            return new KafkaClusterRebalanceStatusBuilder()
+                                    .withOptimizationResult(response.getJson().getJsonObject("summary").getMap())
+                                    .addNewCondition().withNewType(ready.toString()).endCondition().build();
+                        } else {
+                            throw new RuntimeException("Rebalance returned unknown response: " + response.toString());
+                        }
                     }
                 });
     }
