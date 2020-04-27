@@ -258,7 +258,7 @@ public class CruiseControl extends AbstractModel {
     public static void checkGoals(CruiseControlConfiguration configuration) {
         // If self healing goals are defined then these take precedence
         if (configuration.getConfigOption(CRUISE_CONTROL_SELF_HEALING_CONFIG_KEY) != null) {
-            String selfHealingGoalsString = configuration.getConfigOption(CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY);
+            String selfHealingGoalsString = configuration.getConfigOption(CRUISE_CONTROL_SELF_HEALING_CONFIG_KEY);
             List<String> selfHealingGoals = Arrays.asList(selfHealingGoalsString.split("\\s*,\\s*"));
             if (!selfHealingGoals.isEmpty()) {
                 throw new UnsupportedOperationException("Cruise Control's self healing functionality is not currently supported. Please remove " +
