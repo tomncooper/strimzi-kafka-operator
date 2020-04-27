@@ -37,14 +37,14 @@ public class StatusUtils {
         if (error == null) {
             readyCondition = new ConditionBuilder()
                     .withLastTransitionTime(iso8601Now())
-                    .withType("Ready")
-                    .withStatus(type)
+                    .withType(type)
+                    .withStatus("Ready")
                     .build();
         } else {
             readyCondition = new ConditionBuilder()
                     .withLastTransitionTime(iso8601Now())
-                    .withType("NotReady")
-                    .withStatus(type)
+                    .withType(type)
+                    .withStatus("NotReady")
                     .withReason(error.getClass().getSimpleName())
                     .withMessage(error.getMessage())
                     .build();
