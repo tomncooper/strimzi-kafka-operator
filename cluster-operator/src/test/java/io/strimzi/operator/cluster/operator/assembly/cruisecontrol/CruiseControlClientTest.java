@@ -17,6 +17,8 @@ import org.mockserver.integration.ClientAndServer;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlApi.CC_REST_API_SUMMARY;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -125,7 +127,7 @@ public class CruiseControlClientTest {
     }
 
     @Test
-    public void testCCRebalanceError(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
+    public void testCCRebalanceNotEnoughValidWindowsException(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
 
         MockCruiseControl.setupCCRebalanceResponse(ccServer);
 
@@ -133,13 +135,13 @@ public class CruiseControlClientTest {
 
         CruiseControlApiImpl client = new CruiseControlApiImpl(vertx);
 
-        client.rebalance(HOST, PORT, rbOptions, MockCruiseControl.REBALANCE_ERROR)
+        client.rebalance(HOST, PORT, rbOptions, MockCruiseControl.REBALANCE_NOT_ENOUGH_VALID_WINDOWS_ERROR)
                 .setHandler(result -> {
                     if (result.succeeded()) {
-                        System.err.println(result.result().prettyPrint());
-                        context.failNow(new RuntimeException("The request to the mock sever with the REBALANCE_ERROR header should fail"));
-                    } else {
+                        assertThat(result.result().thereIsNotEnoughDataForProposal(), is(true));
                         context.completeNow();
+                    } else {
+                        context.failNow(result.cause());
                     }
                 });
     }
@@ -154,9 +156,7 @@ public class CruiseControlClientTest {
 
         client.getUserTaskStatus(HOST, PORT, userTaskID).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(result.getUserTaskId(), is(MockCruiseControl.USER_TASK_REBALANCE_NO_GOALS_RESPONSE_UTID)));
-            context.verify(() -> assertThat(
-                    result.getJson().getJsonArray("userTasks").getJsonObject(0).getString("UserTaskId"),
-                    is(userTaskID)));
+            context.verify(() -> assertThat(result.getJson().getJsonObject(CC_REST_API_SUMMARY), is(notNullValue())));
             context.completeNow();
         }));
     }
@@ -171,9 +171,7 @@ public class CruiseControlClientTest {
 
         client.getUserTaskStatus(HOST, PORT, userTaskID).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(result.getUserTaskId(), is(MockCruiseControl.USER_TASK_REBALANCE_NO_GOALS_VERBOSE_RESPONSE_UTID)));
-            context.verify(() -> assertThat(
-                    result.getJson().getJsonArray("userTasks").getJsonObject(0).getString("UserTaskId"),
-                    is(userTaskID)));
+            context.verify(() -> assertThat(result.getJson().getJsonObject(CC_REST_API_SUMMARY), is(notNullValue())));
             context.completeNow();
         }));
     }

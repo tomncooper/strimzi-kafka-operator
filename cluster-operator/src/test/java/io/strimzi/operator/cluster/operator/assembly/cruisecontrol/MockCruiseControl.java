@@ -44,8 +44,8 @@ public class MockCruiseControl {
     public static final String USER_TASK_REBALANCE_NO_GOALS_VERBOSE_UTID = USER_TASK_REBALANCE_NO_GOALS + SEP + VERBOSE;
     public static final String USER_TASK_REBALANCE_NO_GOALS_RESPONSE_UTID = USER_TASK_REBALANCE_NO_GOALS + SEP + RESPONSE;
     public static final String USER_TASK_REBALANCE_NO_GOALS_VERBOSE_RESPONSE_UTID = USER_TASK_REBALANCE_NO_GOALS_VERBOSE_UTID + SEP + RESPONSE;
-    public static final String REBALANCE_ERROR = REBALANCE + SEP + "error";
-    public static final String REBALANCE_ERROR_RESPONSE_UTID = REBALANCE_ERROR + SEP + RESPONSE;
+    public static final String REBALANCE_NOT_ENOUGH_VALID_WINDOWS_ERROR = REBALANCE + SEP + "error";
+    public static final String REBALANCE_NOT_ENOUGH_VALID_WINDOWS_ERROR_RESPONSE_UTID = REBALANCE_NOT_ENOUGH_VALID_WINDOWS_ERROR + SEP + RESPONSE;
     public static final String STATE_PROPOSAL_NOT_READY = STATE + SEP + "proposal" + SEP + "not" + SEP + "ready";
     public static final String STATE_PROPOSAL_NOT_READY_RESPONSE = STATE_PROPOSAL_NOT_READY + SEP + RESPONSE;
 
@@ -97,7 +97,7 @@ public class MockCruiseControl {
                                 .withQueryStringParameter(Parameter.param(CruiseControlParameters.JSON.key, "true|false"))
                                 .withQueryStringParameter(Parameter.param(CruiseControlParameters.VERBOSE.key, "true|false"))
                                 .withPath(CruiseControlEndpoints.STATE.path)
-                                .withHeaders(header(CruiseControlApi.USER_ID_HEADER, STATE_PROPOSAL_NOT_READY)))
+                                .withHeaders(header(CruiseControlApi.CC_REST_API_USER_ID_HEADER, STATE_PROPOSAL_NOT_READY)))
                 .respond(
                         response()
                                 .withBody(jsonProposalNotReady)
@@ -152,12 +152,13 @@ public class MockCruiseControl {
                                 .withQueryStringParameter(Parameter.param(CruiseControlParameters.DRY_RUN.key, "true|false"))
                                 .withQueryStringParameter(Parameter.param(CruiseControlParameters.VERBOSE.key, "true|false"))
                                 .withPath(CruiseControlEndpoints.REBALANCE.path)
-                                .withHeaders(header(CruiseControlApi.USER_ID_HEADER, REBALANCE_ERROR)))
+                                .withHeaders(header(CruiseControlApi.CC_REST_API_USER_ID_HEADER, REBALANCE_NOT_ENOUGH_VALID_WINDOWS_ERROR)))
 
                 .respond(
                         response()
+                                .withStatusCode(500)
                                 .withBody(jsonError)
-                                .withHeaders(header(CruiseControlApi.USER_ID_HEADER, REBALANCE_ERROR_RESPONSE_UTID))
+                                .withHeaders(header(CruiseControlApi.CC_REST_API_USER_ID_HEADER, REBALANCE_NOT_ENOUGH_VALID_WINDOWS_ERROR_RESPONSE_UTID))
                                 .withDelay(TimeUnit.SECONDS, RESPONSE_DELAY_SEC));
 
         // Rebalance response with no goals set - non-verbose

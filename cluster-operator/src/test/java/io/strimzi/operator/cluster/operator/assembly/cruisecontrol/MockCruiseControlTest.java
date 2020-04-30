@@ -57,7 +57,7 @@ public class MockCruiseControlTest {
             for (int i = 1; i <= pendingCalls; i++) {
                 statusFuture = statusFuture.compose(response -> {
                     context.verify(() -> assertThat(
-                            response.getJson().getJsonArray("userTasks").getJsonObject(0).getString("Status"),
+                            response.getJson().getString("Status"),
                             is(CruiseControlUserTaskStatus.IN_EXECUTION.toString()))
                     );
                     return client.getUserTaskStatus(HOST, PORT, userTaskID);
@@ -67,7 +67,7 @@ public class MockCruiseControlTest {
 
         statusFuture.compose(response -> {
             context.verify(() -> assertThat(
-                    response.getJson().getJsonArray("userTasks").getJsonObject(0).getString("Status"),
+                    response.getJson().getString("Status"),
                     is(CruiseControlUserTaskStatus.COMPLETED.toString()))
             );
             return Future.succeededFuture(response);
@@ -114,7 +114,7 @@ public class MockCruiseControlTest {
         for (int i = 1; i <= pendingCalls1; i++) {
             statusFuture = statusFuture.compose(response -> {
                 context.verify(() -> assertThat(
-                        response.getJson().getJsonArray("userTasks").getJsonObject(0).getString("Status"),
+                        response.getJson().getString("Status"),
                         is(CruiseControlUserTaskStatus.IN_EXECUTION.toString()))
                 );
                 firstPending.flag();
@@ -124,7 +124,7 @@ public class MockCruiseControlTest {
 
         statusFuture = statusFuture.compose(response -> {
             context.verify(() -> assertThat(
-                    response.getJson().getJsonArray("userTasks").getJsonObject(0).getString("Status"),
+                    response.getJson().getString("Status"),
                     is(CruiseControlUserTaskStatus.COMPLETED.toString()))
             );
             return Future.succeededFuture(response);
@@ -147,7 +147,7 @@ public class MockCruiseControlTest {
         for (int i = 1; i <= pendingCalls2; i++) {
             statusFuture = statusFuture.compose(response -> {
                 context.verify(() -> assertThat(
-                        response.getJson().getJsonArray("userTasks").getJsonObject(0).getString("Status"),
+                        response.getJson().getString("Status"),
                         is(CruiseControlUserTaskStatus.IN_EXECUTION.toString()))
                 );
                 secondPending.flag();

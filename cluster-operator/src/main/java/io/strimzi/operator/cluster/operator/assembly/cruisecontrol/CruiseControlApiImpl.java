@@ -9,6 +9,7 @@ import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
 public class CruiseControlApiImpl implements CruiseControlApi {
@@ -42,7 +43,7 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                 .get(port, host, path, response -> {
                     response.exceptionHandler(result::fail);
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
-                        String userTaskID = response.getHeader(USER_ID_HEADER);
+                        String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
                         response.bodyHandler(buffer -> {
                             JsonObject json = buffer.toJsonObject();
                             if (json.containsKey(CC_REST_API_ERROR_KEY)) {
@@ -62,7 +63,7 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                 .exceptionHandler(result::fail);
 
         if (userTaskId != null) {
-            request.putHeader(USER_ID_HEADER, userTaskId);
+            request.putHeader(CC_REST_API_USER_ID_HEADER, userTaskId);
         }
 
         request.end();
@@ -113,19 +114,26 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                     response.exceptionHandler(result::fail);
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
                         response.bodyHandler(buffer -> {
-                            String returnedUTID = response.getHeader(USER_ID_HEADER);
+                            String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
                             JsonObject json = buffer.toJsonObject();
-                            boolean notEnoughData = false;
+                            CruiseControlResponse ccResponse = new CruiseControlResponse(userTaskID, json);
+                            result.complete(ccResponse);
+                        });
+                    } else if (response.statusCode() == 500) {
+                        response.bodyHandler(buffer -> {
+                            String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
+                            JsonObject json = buffer.toJsonObject();
+                            CruiseControlResponse ccResponse = new CruiseControlResponse(userTaskID, json);
                             if (json.containsKey(CC_REST_API_ERROR_KEY)) {
                                 if (json.getString(CC_REST_API_ERROR_KEY).contains("NotEnoughValidWindowsException")) {
-                                    notEnoughData = true;
+                                    ccResponse.setNotEnoughDataForProposal(true);
+                                    result.complete(ccResponse);
                                 } else {
                                     result.fail(json.getString(CC_REST_API_ERROR_KEY));
                                 }
+                            } else {
+                                result.complete(ccResponse);
                             }
-                            CruiseControlResponse ccResponse = new CruiseControlResponse(returnedUTID, json);
-                            ccResponse.setNotEnoughDataForProposal(notEnoughData);
-                            result.complete(ccResponse);
                         });
                     } else {
                         result.fail(new CruiseControlRestException(
@@ -136,7 +144,7 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                 .exceptionHandler(result::fail);
 
         if (userTaskId != null) {
-            request.putHeader(USER_ID_HEADER, userTaskId);
+            request.putHeader(CC_REST_API_USER_ID_HEADER, userTaskId);
         }
 
         request.end();
@@ -161,9 +169,12 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                 .get(port, host, path, response -> {
                     response.exceptionHandler(result::fail);
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
-                        String userTaskID = response.getHeader(USER_ID_HEADER);
+                        String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
                         response.bodyHandler(buffer -> {
-                            JsonObject json = buffer.toJsonObject();
+                            JsonObject jsonUserTask = buffer.toJsonObject().getJsonArray("userTasks").getJsonObject(0);
+                            JsonObject json = new JsonObject()
+                                    .put("Status", jsonUserTask.getString("Status"))
+                                    .put("summary", ((JsonObject) Json.decodeValue(jsonUserTask.getString("originalResponse"))).getJsonObject("summary"));
                             if (json.containsKey(CC_REST_API_ERROR_KEY)) {
                                 result.fail(json.getString(CC_REST_API_ERROR_KEY));
                             } else {
@@ -197,7 +208,7 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                 .post(port, host, path, response -> {
                     response.exceptionHandler(result::fail);
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
-                        String userTaskID = response.getHeader(USER_ID_HEADER);
+                        String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
                         response.bodyHandler(buffer -> {
                             JsonObject json = buffer.toJsonObject();
                             if (json.containsKey(CC_REST_API_ERROR_KEY)) {

@@ -11,7 +11,10 @@ import io.vertx.core.Future;
  */
 public interface CruiseControlApi {
 
-    String USER_ID_HEADER = "User-Task-ID";
+    String CC_REST_API_ERROR_KEY = "errorMessage";
+    String CC_REST_API_STACKTRACE_KEY = "stackTrace";
+    String CC_REST_API_USER_ID_HEADER = "User-Task-ID";
+    String CC_REST_API_SUMMARY = "summary";
 
     Future<CruiseControlResponse> getCruiseControlState(String host, int port, boolean verbose);
     Future<Boolean> isProposalReady(String host, int port);
