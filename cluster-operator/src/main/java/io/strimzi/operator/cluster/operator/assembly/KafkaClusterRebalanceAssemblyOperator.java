@@ -240,7 +240,10 @@ public class KafkaClusterRebalanceAssemblyOperator
         Stopped,
         /**
          * There's been some error.
-         * There is no transition from this state to a new one.
+         * Transitions to:
+         * <dl>
+         *     <dt>New</dt><dd>If the error was caused by the resource itself that was fixed by the user.</dd>
+         * </dl>
          */
         NotReady,
         /**
