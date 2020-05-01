@@ -285,6 +285,9 @@ public class KafkaClusterRebalanceAssemblyOperator
         if (clusterRebalance.getSpec().getGoals() != null) {
             rebalanceOptionsBuilder.withGoals(clusterRebalance.getSpec().getGoals());
         }
+        if (clusterRebalance.getSpec().isSkipHardGoalCheck()) {
+            rebalanceOptionsBuilder.withSkipHardGoalCheck();
+        }
         log.info("{}: Rebalance action from state [{}]", reconciliation, currentState);
 
         return computeNextStatus(reconciliation, host, apiClient, clusterRebalance, currentState, rebalanceAnnotation, rebalanceOptionsBuilder)

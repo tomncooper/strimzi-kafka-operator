@@ -38,10 +38,14 @@ spec:
               items:
                 type: string
               description: A list of goals, ordered by decreasing priority, to use
-                in generating the proposal and executing it.The supported goals are
-                available at https://github.com/linkedin/cruise-control#goals.Providing
-                empty goals means to use all the ones declared in the default.goals
-                cruise control configuration parameter.
+                for generating and executing the rebalance proposal.The supported
+                goals are available at https://github.com/linkedin/cruise-control#goals.If
+                an empty goals list is provided, the goals declared in the default.goals
+                Cruise Control configuration parameter are used.
+            skipHardGoalCheck:
+              type: boolean
+              description: Whether to allow hard goals to be skipped in rebalance
+                proposal generation. Default is false.
             verbose:
               type: boolean
               description: Enable the verbose mode for the JSON string describing

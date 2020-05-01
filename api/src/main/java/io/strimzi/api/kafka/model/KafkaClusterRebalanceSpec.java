@@ -23,26 +23,37 @@ import java.util.Map;
         builderPackage = "io.fabric8.kubernetes.api.builder"
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "goals", "verbose" })
+@JsonPropertyOrder({ "goals", "skipHardGoalCheck", "verbose" })
 @EqualsAndHashCode
 public class KafkaClusterRebalanceSpec implements UnknownPropertyPreserving, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private List<String> goals;
+    private boolean skipHardGoalCheck;
     private boolean verbose = false;
 
     private Map<String, Object> additionalProperties = new HashMap<>(0);
 
-    @Description("A list of goals, ordered by decreasing priority, to use in generating the proposal and executing it." +
+    @Description("A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal." +
             "The supported goals are available at https://github.com/linkedin/cruise-control#goals." +
-            "Providing empty goals means to use all the ones declared in the default.goals cruise control configuration parameter.")
+            "If an empty goals list is provided, the goals declared in the default.goals Cruise Control configuration parameter are used.")
     public List<String> getGoals() {
         return goals;
     }
 
     public void setGoals(List<String> goals) {
         this.goals = goals;
+    }
+
+    @Description("Whether to allow hard goals to be skipped in rebalance proposal generation. Default is false.")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public boolean isSkipHardGoalCheck() {
+        return skipHardGoalCheck;
+    }
+
+    public void setSkipHardGoalCheck(boolean skipHardGoalCheck) {
+        this.skipHardGoalCheck = skipHardGoalCheck;
     }
 
     @Description("Enable the verbose mode for the JSON string describing the optimization result in the related status")

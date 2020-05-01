@@ -49,7 +49,8 @@ public class PathBuilder {
     public PathBuilder addRebalanceParameters(RebalanceOptions options) {
         if (options != null) {
             PathBuilder builder = addParameter(CruiseControlParameters.DRY_RUN, String.valueOf(options.isDryRun()))
-                    .addParameter(CruiseControlParameters.VERBOSE, String.valueOf(options.isVerbose()));
+                    .addParameter(CruiseControlParameters.VERBOSE, String.valueOf(options.isVerbose()))
+                    .addParameter(CruiseControlParameters.SKIP_HARD_GOAL_CHECK, String.valueOf(options.isSkipHardGoalCheck()));
 
             if (options.getGoals() != null) {
                 builder.addParameter(CruiseControlParameters.GOALS, options.getGoals());

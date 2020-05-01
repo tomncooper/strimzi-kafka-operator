@@ -11,6 +11,7 @@ public class RebalanceOptions {
     private boolean isDryRun;
     private List<String> goals;
     private boolean verbose;
+    private boolean skipHardGoalCheck;
     private boolean json = true;
 
     public boolean isDryRun() {
@@ -19,6 +20,10 @@ public class RebalanceOptions {
 
     public boolean isVerbose() {
         return verbose;
+    }
+
+    public boolean isSkipHardGoalCheck() {
+        return skipHardGoalCheck;
     }
 
     public List<String> getGoals() {
@@ -32,6 +37,7 @@ public class RebalanceOptions {
     private RebalanceOptions(RebalanceOptionsBuilder builder) {
         this.isDryRun = builder.isDryRun;
         this.verbose = builder.verbose;
+        this.skipHardGoalCheck = builder.skipHardGoalCheck;
         this.goals = builder.goals;
         this.verbose = builder.verbose;
     }
@@ -40,11 +46,13 @@ public class RebalanceOptions {
 
         private boolean isDryRun;
         private boolean verbose;
+        private boolean skipHardGoalCheck;
         private List<String> goals;
 
         public RebalanceOptionsBuilder() {
             isDryRun = true;
             verbose = false;
+            skipHardGoalCheck = false;
             goals = null;
         }
 
@@ -55,6 +63,11 @@ public class RebalanceOptions {
 
         public RebalanceOptionsBuilder withVerboseResponse() {
             this.verbose = true;
+            return this;
+        }
+
+        public RebalanceOptionsBuilder withSkipHardGoalCheck() {
+            this.skipHardGoalCheck = true;
             return this;
         }
 

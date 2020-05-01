@@ -10,6 +10,7 @@ public enum CruiseControlParameters {
     JSON("json"),
     GOALS("goals"),
     VERBOSE("verbose"),
+    SKIP_HARD_GOAL_CHECK("skip_hard_goal_check"),
     FETCH_COMPLETE("fetch_completed_task"),
     USER_TASK_IDS("user_task_ids");
 
