@@ -7,4 +7,4 @@ spec:
   goals:
   - "DiskCapacityGoal"
   - "CpuCapacityGoal"
-  verbose: true
+  skipHardGoalCheck: true
