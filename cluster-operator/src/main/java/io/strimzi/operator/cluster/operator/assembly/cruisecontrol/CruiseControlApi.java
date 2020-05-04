@@ -12,13 +12,12 @@ import io.vertx.core.Future;
 public interface CruiseControlApi {
 
     String CC_REST_API_ERROR_KEY = "errorMessage";
-    String CC_REST_API_STACKTRACE_KEY = "stackTrace";
+    String CC_REST_API_PROGRESS_KEY = "progress";
     String CC_REST_API_USER_ID_HEADER = "User-Task-ID";
     String CC_REST_API_SUMMARY = "summary";
 
     Future<CruiseControlResponse> getCruiseControlState(String host, int port, boolean verbose);
-    Future<Boolean> isProposalReady(String host, int port);
-    Future<CruiseControlResponse> rebalance(String host, int port, RebalanceOptions options);
+    Future<CruiseControlRebalanceResponse> rebalance(String host, int port, RebalanceOptions options, String userTaskID);
     Future<CruiseControlResponse> getUserTaskStatus(String host, int port, String userTaskId);
     Future<CruiseControlResponse> stopExecution(String host, int port);
 

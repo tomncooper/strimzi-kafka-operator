@@ -14,7 +14,6 @@ import io.vertx.core.json.JsonObject;
 
 public class CruiseControlApiImpl implements CruiseControlApi {
 
-    private static final String CC_REST_API_ERROR_KEY = "errorMessage";
     private static final boolean HTTP_CLIENT_ACTIVITY_LOGGING = false;
 
     private final Vertx vertx;
@@ -72,35 +71,15 @@ public class CruiseControlApiImpl implements CruiseControlApi {
     }
 
     @Override
-    public Future<Boolean> isProposalReady(String host, int port) {
-        return isProposalReady(host, port, null);
-    }
-
-    public Future<Boolean> isProposalReady(String host, int port, String userTaskID) {
-        return getCruiseControlState(host, port, false, userTaskID).compose(stateResponse -> {
-            Boolean proposalReady = stateResponse
-                            .getJson()
-                            .getJsonObject("AnalyzerState")
-                            .getBoolean("isProposalReady");
-            return Future.succeededFuture(proposalReady);
-        });
-
-    }
-
-    @Override
-    public Future<CruiseControlResponse> rebalance(String host, int port, RebalanceOptions rbOptions) {
-        return rebalance(host, port, rbOptions, null);
-    }
-
     @SuppressWarnings("deprecation")
-    public Future<CruiseControlResponse> rebalance(String host, int port, RebalanceOptions rbOptions, String userTaskId) {
+    public Future<CruiseControlRebalanceResponse> rebalance(String host, int port, RebalanceOptions rbOptions, String userTaskId) {
 
         if (rbOptions == null && userTaskId == null) {
             return Future.factory.failedFuture(
                     new IllegalArgumentException("Either rebalance options or user task ID should be supplied, both were null"));
         }
 
-        Promise<CruiseControlResponse> result = Promise.promise();
+        Promise<CruiseControlRebalanceResponse> result = Promise.promise();
         HttpClientOptions httpOptions = new HttpClientOptions().setLogActivity(HTTP_CLIENT_ACTIVITY_LOGGING);
 
         String path = new PathBuilder(CruiseControlEndpoints.REBALANCE)
@@ -116,19 +95,35 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                         response.bodyHandler(buffer -> {
                             String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
                             JsonObject json = buffer.toJsonObject();
-                            CruiseControlResponse ccResponse = new CruiseControlResponse(userTaskID, json);
+                            CruiseControlRebalanceResponse ccResponse = new CruiseControlRebalanceResponse(userTaskID, json);
+                            result.complete(ccResponse);
+                        });
+                    } else if (response.statusCode() == 202) {
+                        response.bodyHandler(buffer -> {
+                            String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
+                            JsonObject json = buffer.toJsonObject();
+                            CruiseControlRebalanceResponse ccResponse = new CruiseControlRebalanceResponse(userTaskID, json);
+                            if (json.containsKey(CC_REST_API_PROGRESS_KEY)) {
+                                // If the response contains a "progress" key then the rebalance proposal has not yet completed processing
+                                ccResponse.setProposalIsStillCalculating(true);
+                            } else {
+                                result.fail(new CruiseControlRestException("202 Status code did not contain progress key. Response was: " +
+                                        ccResponse.getJson().toString()));
+                            }
                             result.complete(ccResponse);
                         });
                     } else if (response.statusCode() == 500) {
                         response.bodyHandler(buffer -> {
                             String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
                             JsonObject json = buffer.toJsonObject();
-                            CruiseControlResponse ccResponse = new CruiseControlResponse(userTaskID, json);
+                            CruiseControlRebalanceResponse ccResponse = new CruiseControlRebalanceResponse(userTaskID, json);
                             if (json.containsKey(CC_REST_API_ERROR_KEY)) {
+                                // If there was a client side error, check whether it was due to not enough data being available
                                 if (json.getString(CC_REST_API_ERROR_KEY).contains("NotEnoughValidWindowsException")) {
                                     ccResponse.setNotEnoughDataForProposal(true);
                                     result.complete(ccResponse);
                                 } else {
+                                    // If there was any other kind of error propagate this to the operator
                                     result.fail(json.getString(CC_REST_API_ERROR_KEY));
                                 }
                             } else {
@@ -159,11 +154,15 @@ public class CruiseControlApiImpl implements CruiseControlApi {
         Promise<CruiseControlResponse> result = Promise.promise();
         HttpClientOptions options = new HttpClientOptions().setLogActivity(HTTP_CLIENT_ACTIVITY_LOGGING);
 
-        String path = new PathBuilder(CruiseControlEndpoints.USER_TASKS)
+        PathBuilder pathBuilder = new PathBuilder(CruiseControlEndpoints.USER_TASKS)
                         .addParameter(CruiseControlParameters.JSON, "true")
-                        .addParameter(CruiseControlParameters.FETCH_COMPLETE, "true")
-                        .addParameter(CruiseControlParameters.USER_TASK_IDS, userTaskId).build();
+                        .addParameter(CruiseControlParameters.FETCH_COMPLETE, "true");
 
+        if (userTaskId != null) {
+            pathBuilder.addParameter(CruiseControlParameters.USER_TASK_IDS, userTaskId);
+        }
+
+        String path = pathBuilder.build();
 
         vertx.createHttpClient(options)
                 .get(port, host, path, response -> {
@@ -180,6 +179,13 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                             } else {
                                 CruiseControlResponse ccResponse = new CruiseControlResponse(userTaskID, json);
                                 result.complete(ccResponse);
+                            }
+                        });
+                    } else if (response.statusCode() == 500) {
+                        response.bodyHandler(buffer -> {
+                            JsonObject json = buffer.toJsonObject();
+                            if (json.containsKey(CC_REST_API_ERROR_KEY)) {
+                                result.fail(json.getString(CC_REST_API_ERROR_KEY));
                             }
                         });
                     } else {

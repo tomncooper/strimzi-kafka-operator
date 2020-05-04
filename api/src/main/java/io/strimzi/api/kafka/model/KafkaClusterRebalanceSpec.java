@@ -23,7 +23,7 @@ import java.util.Map;
         builderPackage = "io.fabric8.kubernetes.api.builder"
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "goals", "skipHardGoalCheck", "verbose" })
+@JsonPropertyOrder({ "goals", "skipHardGoalCheck" })
 @EqualsAndHashCode
 public class KafkaClusterRebalanceSpec implements UnknownPropertyPreserving, Serializable {
 
@@ -31,7 +31,6 @@ public class KafkaClusterRebalanceSpec implements UnknownPropertyPreserving, Ser
 
     private List<String> goals;
     private boolean skipHardGoalCheck;
-    private boolean verbose = false;
 
     private Map<String, Object> additionalProperties = new HashMap<>(0);
 
@@ -54,16 +53,6 @@ public class KafkaClusterRebalanceSpec implements UnknownPropertyPreserving, Ser
 
     public void setSkipHardGoalCheck(boolean skipHardGoalCheck) {
         this.skipHardGoalCheck = skipHardGoalCheck;
-    }
-
-    @Description("Enable the verbose mode for the JSON string describing the optimization result in the related status")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public boolean isVerbose() {
-        return verbose;
-    }
-
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
     }
 
     @Override

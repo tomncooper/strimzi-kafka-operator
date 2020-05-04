@@ -44,6 +44,7 @@ import io.vertx.core.json.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlApi.CC_REST_API_SUMMARY;
@@ -58,6 +59,7 @@ public class KafkaClusterRebalanceAssemblyOperator
 
     public static final String ANNO_STRIMZI_IO_REBALANCE = Annotations.STRIMZI_DOMAIN + "rebalance";
     private static final long REBALANCE_POLLING_TIMER_MS = 5_000;
+    private static final int MAX_API_RETRIES = 5;
 
     private final CrdOperator<KubernetesClient, KafkaClusterRebalance, KafkaClusterRebalanceList, DoneableKafkaClusterRebalance> clusterRebalanceOperator;
     private final CrdOperator<KubernetesClient, Kafka, KafkaList, DoneableKafka> kafkaOperator;
@@ -298,16 +300,16 @@ public class KafkaClusterRebalanceAssemblyOperator
                             .compose(freshClusterRebalance -> {
                                 if (freshClusterRebalance != null) {
                                     return updateStatus(freshClusterRebalance, desiredStatus, clusterRebalanceOperator, null)
-                                            .compose(c -> {
+                                            .compose(updatedClusterRebalance -> {
                                                 log.info("{}: State updated to [{}] with annotation {}={} ",
                                                         reconciliation,
-                                                        c.getStatus().getConditions().get(0).getType(),
+                                                        updatedClusterRebalance.getStatus().getConditions().get(0).getType(),
                                                         ANNO_STRIMZI_IO_REBALANCE,
-                                                        rebalanceAnnotation(c));
-                                                if (hasRebalanceAnnotation(c)) {
+                                                        rebalanceAnnotation(updatedClusterRebalance));
+                                                if (hasRebalanceAnnotation(updatedClusterRebalance)) {
                                                     log.debug("{}: Removing annotation {}={}", reconciliation, ANNO_STRIMZI_IO_REBALANCE,
-                                                            rebalanceAnnotation(c));
-                                                    KafkaClusterRebalance patchedClusterRebalance = new KafkaClusterRebalanceBuilder(c)
+                                                            rebalanceAnnotation(updatedClusterRebalance));
+                                                    KafkaClusterRebalance patchedClusterRebalance = new KafkaClusterRebalanceBuilder(updatedClusterRebalance)
                                                             .editMetadata().removeFromAnnotations(ANNO_STRIMZI_IO_REBALANCE).endMetadata().build();
 
                                                     return clusterRebalanceOperator.patchAsync(patchedClusterRebalance);
@@ -321,12 +323,12 @@ public class KafkaClusterRebalanceAssemblyOperator
                                     return Future.succeededFuture();
                                 }
                             }, exception -> {
-                                    log.error("{}: Status updated to [NotReady] due to error", exception);
+                                    log.error("{}: Status updated to [NotReady] due to error: {}", reconciliation, exception.getMessage());
                                     return updateStatus(clusterRebalance, new KafkaClusterRebalanceStatus(), clusterRebalanceOperator, exception)
                                             .mapEmpty();
                                 });
                 }, exception -> {
-                        log.error("{}: Status updated to [NotReady] due to error", exception);
+                        log.error("{}: Status updated to [NotReady] due to error: {}", reconciliation, exception.getMessage());
                         return updateStatus(clusterRebalance, new KafkaClusterRebalanceStatus(), clusterRebalanceOperator, exception)
                                 .mapEmpty();
                     });
@@ -348,9 +350,11 @@ public class KafkaClusterRebalanceAssemblyOperator
             case Stopped:
                 return onStop(reconciliation, host, apiClient, rebalanceAnnotation, rebalanceOptionsBuilder);
             case Ready:
+                // Rebalance Complete
                 return Future.succeededFuture(clusterRebalance.getStatus());
             case NotReady:
-                return onNew(reconciliation, host, apiClient, rebalanceOptionsBuilder);
+                // Error case
+                return onNotReady(reconciliation, host, apiClient, clusterRebalance, rebalanceAnnotation, rebalanceOptionsBuilder);
             default:
                 return Future.failedFuture(new RuntimeException("Unexpected state " + currentState));
         }
@@ -372,6 +376,31 @@ public class KafkaClusterRebalanceAssemblyOperator
                                                       String host, CruiseControlApi apiClient,
                                                       RebalanceOptions.RebalanceOptionsBuilder rebalanceOptionsBuilder) {
         return requestRebalance(reconciliation, host, apiClient, true, rebalanceOptionsBuilder);
+    }
+
+    /**
+     * This method handles the transition from {@code NotReady} state.
+     * This state indicates that the rebalance has suffered some kind of error. This could be a misconfiguration or the result
+     * of an error during a reconcile.
+     *
+     * @param reconciliation Reconciliation information
+     * @param host Cruise Control service to which sending the rebalance proposal request
+     * @param apiClient Cruise Control REST API client instance
+     * @param clusterRebalance Current {@code KafkaClusterRebalance} resource
+     * @param rebalanceAnnotation The current value for the strimzi.io/rebalance annotation
+     * @param rebalanceOptionsBuilder builder for the Cruise Control REST API client options
+     * @return a Future with the next {@code KafkaClusterRebalanceStatus} bringing the state
+     */
+    private Future<KafkaClusterRebalanceStatus> onNotReady(Reconciliation reconciliation,
+                                                           String host, CruiseControlApi apiClient,
+                                                           KafkaClusterRebalance clusterRebalance,
+                                                           RebalanceAnnotation rebalanceAnnotation,
+                                                           RebalanceOptions.RebalanceOptionsBuilder rebalanceOptionsBuilder) {
+        if (rebalanceAnnotation == RebalanceAnnotation.refresh) {
+            return onNew(reconciliation, host, apiClient, rebalanceOptionsBuilder);
+        } else {
+            return Future.succeededFuture(clusterRebalance.getStatus());
+        }
     }
 
     /**
@@ -415,22 +444,26 @@ public class KafkaClusterRebalanceAssemblyOperator
                                             .withSessionId(null)
                                             .addNewCondition().withNewType(State.Stopped.toString()).endCondition().build());
                                 } else {
-                                    requestRebalance(reconciliation, host, apiClient, true, rebalanceOptionsBuilder).setHandler(rebalanceResult -> {
-                                        if (rebalanceResult.succeeded()) {
-                                            // rebalance proposal ready, stop the polling
-                                            if (rebalanceResult.result().getOptimizationResult() != null &&
-                                                    !rebalanceResult.result().getOptimizationResult().isEmpty()) {
-                                                vertx.cancelTimer(t);
-                                                p.complete(rebalanceResult.result());
-                                            }
-                                            // rebalance proposal not ready yet, keep the timer for polling
-                                        } else {
-                                            log.error("Cruise Control getting rebalance proposal failed", rebalanceResult.cause());
-                                            vertx.cancelTimer(t);
-                                            p.fail(rebalanceResult.cause());
-                                        }
-
-                                    });
+                                    requestRebalance(reconciliation, host, apiClient, true, rebalanceOptionsBuilder,
+                                            freshClusterRebalance.getStatus().getSessionId()).setHandler(rebalanceResult -> {
+                                                if (rebalanceResult.succeeded()) {
+                                                    // If the returned status has an optimization result then the rebalance proposal
+                                                    // is ready, so stop the polling
+                                                    if (rebalanceResult.result().getOptimizationResult() != null &&
+                                                            !rebalanceResult.result().getOptimizationResult().isEmpty()) {
+                                                        vertx.cancelTimer(t);
+                                                        log.debug("Optimization proposal ready");
+                                                        p.complete(rebalanceResult.result());
+                                                    } else {
+                                                        log.debug("Waiting for optimization proposal to be ready");
+                                                    }
+                                                    // The rebalance proposal is still not ready yet, keep the timer for polling
+                                                } else {
+                                                    log.error("Cruise Control getting rebalance proposal failed", rebalanceResult.cause());
+                                                    vertx.cancelTimer(t);
+                                                    p.fail(rebalanceResult.cause());
+                                                }
+                                            });
                                 }
                             } else {
                                 p.complete(freshClusterRebalance.getStatus());
@@ -514,7 +547,13 @@ public class KafkaClusterRebalanceAssemblyOperator
         if (rebalanceAnnotation == RebalanceAnnotation.none) {
             log.info("{}: Arming Cruise Control rebalance user task status timer", reconciliation);
             String sessionId = clusterRebalance.getStatus().getSessionId();
+            AtomicInteger ccAPIErrorCount = new AtomicInteger();
             vertx.setPeriodic(REBALANCE_POLLING_TIMER_MS, t -> {
+                // Check that we have not already failed to contact the API beyond the allowed number of times.
+                if (ccAPIErrorCount.get() >= MAX_API_RETRIES) {
+                    vertx.cancelTimer(t);
+                    p.fail(new RuntimeException("Unable to reach Cruise Control API after " + MAX_API_RETRIES + " attempts"));
+                }
                 resourceOperator.getAsync(clusterRebalance.getMetadata().getNamespace(), clusterRebalance.getMetadata().getName()).setHandler(getResult -> {
                     if (getResult.succeeded()) {
                         KafkaClusterRebalance freshClusterRebalance = getResult.result();
@@ -536,6 +575,9 @@ public class KafkaClusterRebalanceAssemblyOperator
                                 });
                             } else {
                                 log.info("{}: Getting Cruise Control rebalance user task status", reconciliation);
+                                // TODO: If this request results in multiple errors from the server then the Rebalance state
+                                //       will switch to NotReady -> ProposalPending -> ProposalReady even though we are in
+                                //       an ongoing rebalance. We may need to add an Error state to the state machine.
                                 apiClient.getUserTaskStatus(host, CruiseControl.REST_API_PORT, sessionId).setHandler(userTaskResult -> {
                                     if (userTaskResult.succeeded()) {
                                         CruiseControlResponse response = userTaskResult.result();
@@ -545,17 +587,49 @@ public class KafkaClusterRebalanceAssemblyOperator
                                         switch (taskStatus) {
                                             case COMPLETED:
                                                 vertx.cancelTimer(t);
+                                                log.info("Rebalance ({}) is now complete", sessionId);
                                                 p.complete(new KafkaClusterRebalanceStatusBuilder()
                                                         .withSessionId(null)
-                                                        .withOptimizationResult(taskStatusJson.getJsonObject("rebalance").getMap())
+                                                        .withOptimizationResult(taskStatusJson.getJsonObject("summary").getMap())
                                                         .addNewCondition().withType(State.Ready.toString()).endCondition().build());
                                                 break;
                                             case COMPLETED_WITH_ERROR:
-                                                // TODO: Add exception handling and update status?
+                                                // TODO: There doesn't seem to be a way to retrieve the actual error message from the user tasks endpoint?
+                                                //       We may need to propose an upstream PR for this.
+                                                // TODO: Once we can get the error details we need to add an error field to the Rebalance Status to hold
+                                                //       details of any issues while rebalancing.
+                                                log.error("Rebalance ({}) optimization proposal has failed to complete", sessionId);
+                                                vertx.cancelTimer(t);
+                                                p.complete(new KafkaClusterRebalanceStatusBuilder()
+                                                        .withSessionId(sessionId)
+                                                        .addNewCondition().withType(State.NotReady.toString()).endCondition().build());
                                                 break;
-                                            case IN_EXECUTION: // Skip as still processing
+                                            case IN_EXECUTION: // Rebalance is still in progress
+                                                // We need to check that the status has been updated with the ongoing optimisation proposal
+                                                // The proposal field can be empty if a rebalance(dryrun=false) was called and the optimisation
+                                                // proposal was still being prepared (in progress). In that case the rebalance will start when
+                                                // the proposal is complete but the optimisation proposal summary will be missing.
+                                                if (freshClusterRebalance.getStatus().getOptimizationResult() == null ||
+                                                        freshClusterRebalance.getStatus().getOptimizationResult().isEmpty()) {
+                                                    log.info("Rebalance ({}) optimization proposal is now ready and has been added to the status", sessionId);
+                                                    // Cancel the timer so that the status is returned and updated.
+                                                    vertx.cancelTimer(t);
+                                                    p.complete(new KafkaClusterRebalanceStatusBuilder()
+                                                            .withSessionId(sessionId)
+                                                            .withOptimizationResult(taskStatusJson.getJsonObject("summary").getMap())
+                                                            .addNewCondition().withType(State.Rebalancing.toString()).endCondition().build());
+                                                }
+                                                ccAPIErrorCount.set(0);
+                                                // TODO: Find out if there is any way to check the progress of a rebalance.
+                                                //       We could parse the verbose proposal for total number of reassignments and compare to number completed (if available)?
+                                                //       We can then update the status at this point.
                                                 break;
-                                            case ACTIVE: // Skip as still processing
+                                            case ACTIVE: // Rebalance proposal is still being calculated
+                                                // If a rebalance(dryrun=false) was called and the proposal is still being prepared then the task
+                                                // will be in an ACTIVE state. When the proposal is ready it will shift to IN_EXECUTION and we will
+                                                // check that the optimisation proposal is added to the status on the next reconcile.
+                                                log.info("Rebalance ({}) optimization proposal is still being prepared", sessionId);
+                                                ccAPIErrorCount.set(0);
                                                 break;
                                             default:
                                                 log.error("Unexpected state {}", taskStatus);
@@ -565,8 +639,9 @@ public class KafkaClusterRebalanceAssemblyOperator
                                         }
                                     } else {
                                         log.error("Cruise Control getting rebalance task status failed", userTaskResult.cause());
-                                        vertx.cancelTimer(t);
-                                        p.fail(userTaskResult.cause());
+                                        // To make sure this error is not just a temporary problem with the network we retry several times.
+                                        // If the number of errors pass the MAX_API_ERRORS limit then the period method will fail the promise.
+                                        ccAPIErrorCount.getAndIncrement();
                                     }
                                 });
                             }
@@ -635,26 +710,48 @@ public class KafkaClusterRebalanceAssemblyOperator
     private Future<KafkaClusterRebalanceStatus> requestRebalance(Reconciliation reconciliation,
                                                                  String host, CruiseControlApi apiClient,
                                                                  boolean dryrun, RebalanceOptions.RebalanceOptionsBuilder rebalanceOptionsBuilder) {
+        return requestRebalance(reconciliation, host, apiClient, dryrun, rebalanceOptionsBuilder, null);
+    }
+
+    private Future<KafkaClusterRebalanceStatus> requestRebalance(Reconciliation reconciliation, String host, CruiseControlApi apiClient,
+        boolean dryrun, RebalanceOptions.RebalanceOptionsBuilder rebalanceOptionsBuilder, String userTaskID) {
+
         log.info("{}: Requesting Cruise Control rebalance [dryrun={}]", reconciliation, dryrun);
         if (!dryrun) {
             rebalanceOptionsBuilder.withFullRun();
         }
-        State ready = dryrun ? State.ProposalReady : State.Ready;
-        State inprogress = dryrun ? State.PendingProposal : State.Rebalancing;
-        return apiClient.rebalance(host, CruiseControl.REST_API_PORT, rebalanceOptionsBuilder.build())
+        return apiClient.rebalance(host, CruiseControl.REST_API_PORT, rebalanceOptionsBuilder.build(), userTaskID)
                 .map(response -> {
-                    if (response.thereIsNotEnoughDataForProposal()) {
-                        return new KafkaClusterRebalanceStatusBuilder()
-                                .withNewSessionId(response.getUserTaskId())
-                                .addNewCondition().withNewType(inprogress.toString()).endCondition().build();
-                    } else {
-                        if (response.getJson().containsKey(CC_REST_API_SUMMARY)) {
+                    if (dryrun) {
+                        if (response.thereIsNotEnoughDataForProposal() || response.proposalIsStillCalculating()) {
+                            // If either there not enough data for a rebalance or it is still being processed we need to
+                            // re-request the proposal at a later stage so we move to the PendingProposal State.
                             return new KafkaClusterRebalanceStatusBuilder()
-                                    .withOptimizationResult(response.getJson().getJsonObject(CC_REST_API_SUMMARY).getMap())
-                                    .addNewCondition().withNewType(ready.toString()).endCondition().build();
-                        } else {
-                            throw new RuntimeException("Rebalance returned unknown response: " + response.toString());
+                                    .withNewSessionId(response.getUserTaskId())
+                                    .addNewCondition().withNewType(State.PendingProposal.toString()).endCondition().build();
                         }
+                    } else {
+                        if (response.thereIsNotEnoughDataForProposal()) {
+                            // We do not include a session id with this status as we do not want to retrieve the state of
+                            // this failed tasks (COMPLETED_WITH_ERROR)
+                            return new KafkaClusterRebalanceStatusBuilder()
+                                    .addNewCondition().withNewType(State.PendingProposal.toString()).endCondition().build();
+                        } else if (response.proposalIsStillCalculating()) {
+                            return new KafkaClusterRebalanceStatusBuilder()
+                                    .withNewSessionId(response.getUserTaskId())
+                                    .addNewCondition().withNewType(State.Rebalancing.toString()).endCondition().build();
+                        }
+                    }
+
+                    if (response.getJson().containsKey(CC_REST_API_SUMMARY)) {
+                        // If there is enough data and the proposal is complete (the response has the "summary" key) then we move
+                        // to ProposalReady for a dry run or to the Rebalancing state for a full run
+                        State ready = dryrun ? State.ProposalReady : State.Rebalancing;
+                        return new KafkaClusterRebalanceStatusBuilder()
+                                .withOptimizationResult(response.getJson().getJsonObject(CC_REST_API_SUMMARY).getMap())
+                                .addNewCondition().withNewType(ready.toString()).endCondition().build();
+                    } else {
+                        throw new RuntimeException("Rebalance returned unknown response: " + response.toString());
                     }
                 }).otherwise(t -> {
                     throw new RuntimeException(t.getMessage());

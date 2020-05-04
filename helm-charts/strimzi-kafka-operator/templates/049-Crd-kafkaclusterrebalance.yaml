@@ -46,10 +46,6 @@ spec:
               type: boolean
               description: Whether to allow hard goals to be skipped in rebalance
                 proposal generation. Default is false.
-            verbose:
-              type: boolean
-              description: Enable the verbose mode for the JSON string describing
-                the optimization result in the related status.
           description: The specification of the Kafka Cluster Rebalance.
         status:
           type: object

@@ -61,34 +61,6 @@ public class CruiseControlClientTest {
     }
 
     @Test
-    public void testProposalReady(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
-
-        MockCruiseControl.setupCCStateResponse(ccServer);
-
-        CruiseControlApi client = new CruiseControlApiImpl(vertx);
-
-        client.isProposalReady(HOST, PORT).setHandler(
-                context.succeeding(result -> {
-                    context.verify(() -> assertThat(result, is(true)));
-                    context.completeNow();
-                }));
-    }
-
-    @Test
-    public void testProposalNotReady(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
-
-        MockCruiseControl.setupCCStateResponse(ccServer);
-
-        CruiseControlApiImpl client = new CruiseControlApiImpl(vertx);
-
-        client.isProposalReady(HOST, PORT, MockCruiseControl.STATE_PROPOSAL_NOT_READY).setHandler(
-                context.succeeding(result -> {
-                    context.verify(() -> assertThat(result, is(false)));
-                    context.completeNow();
-                }));
-    }
-
-    @Test
     public void testCCRebalance(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
 
         MockCruiseControl.setupCCRebalanceResponse(ccServer);
@@ -97,7 +69,7 @@ public class CruiseControlClientTest {
 
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
 
-        client.rebalance(HOST, PORT, rbOptions).setHandler(context.succeeding(result -> {
+        client.rebalance(HOST, PORT, rbOptions, null).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(result.getUserTaskId(), is(MockCruiseControl.REBALANCE_NO_GOALS_RESPONSE_UTID)));
             context.verify(() -> assertThat(result.getJson().containsKey("summary"), is(true)));
             context.verify(() -> assertThat(result.getJson().containsKey("goalSummary"), is(true)));
@@ -115,7 +87,7 @@ public class CruiseControlClientTest {
 
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
 
-        client.rebalance(HOST, PORT, rbOptions).setHandler(context.succeeding(result -> {
+        client.rebalance(HOST, PORT, rbOptions, null).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(result.getUserTaskId(), is(MockCruiseControl.REBALANCE_NO_GOALS_VERBOSE_RESPONSE_UTID)));
             context.verify(() -> assertThat(result.getJson().containsKey("summary"), is(true)));
             context.verify(() -> assertThat(result.getJson().containsKey("goalSummary"), is(true)));

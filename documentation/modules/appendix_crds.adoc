@@ -2819,8 +2819,6 @@ Used in: xref:type-KafkaClusterRebalance-{context}[`KafkaClusterRebalance`]
 |string array
 |skipHardGoalCheck  1.2+<.<|Whether to allow hard goals to be skipped in rebalance proposal generation. Default is false.
 |boolean
-|verbose            1.2+<.<|Enable the verbose mode for the JSON string describing the optimization result in the related status.
-|boolean
 |====
 
 [id='type-KafkaClusterRebalanceStatus-{context}']
