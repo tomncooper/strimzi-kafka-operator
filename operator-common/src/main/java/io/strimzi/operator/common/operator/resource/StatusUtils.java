@@ -38,13 +38,13 @@ public class StatusUtils {
             readyCondition = new ConditionBuilder()
                     .withLastTransitionTime(iso8601Now())
                     .withType(type)
-                    .withStatus("Ready")
+                    .withStatus("True")
                     .build();
         } else {
             readyCondition = new ConditionBuilder()
                     .withLastTransitionTime(iso8601Now())
                     .withType(type)
-                    .withStatus("NotReady")
+                    .withStatus("True")
                     .withReason(error.getClass().getSimpleName())
                     .withMessage(error.getMessage())
                     .build();
