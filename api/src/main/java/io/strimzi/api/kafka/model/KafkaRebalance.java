@@ -56,25 +56,25 @@ import static java.util.Collections.unmodifiableList;
 @Buildable(
         editableEnabled = false,
         generateBuilderPackage = false,
-        builderPackage = "io.fabric8.kubernetes.api.builder",
+        builderPackage = Constants.FABRIC8_KUBERNETES_API,
         inline = @Inline(type = Doneable.class, prefix = "Doneable", value = "done")
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"apiVersion", "kind", "metadata", "spec"})
+@JsonPropertyOrder({"apiVersion", "kind", "metadata", "spec", "status"})
 @EqualsAndHashCode
 public class KafkaRebalance extends CustomResource implements UnknownPropertyPreserving, HasStatus<KafkaRebalanceStatus> {
 
     private static final long serialVersionUID = 1L;
 
     public static final String SCOPE = "Namespaced";
-    public static final String V1ALPHA1 = "v1alpha1";
+    public static final String V1ALPHA1 = Constants.V1ALPHA1;
     public static final List<String> VERSIONS = unmodifiableList(asList(V1ALPHA1));
     public static final String RESOURCE_KIND = "KafkaRebalance";
     public static final String RESOURCE_LIST_KIND = RESOURCE_KIND + "List";
-    public static final String RESOURCE_GROUP = "kafka.strimzi.io";
+    public static final String RESOURCE_GROUP = Constants.RESOURCE_GROUP_NAME;
     public static final String RESOURCE_PLURAL = "kafkarebalances";
     public static final String RESOURCE_SINGULAR = "kafkarebalance";
-    public static final String CRD_API_VERSION = "apiextensions.k8s.io/v1beta1";
+    public static final String CRD_API_VERSION = Constants.V1BETA1_API_VERSION;
     public static final String CRD_NAME = RESOURCE_PLURAL + "." + RESOURCE_GROUP;
     public static final String SHORT_NAME = "kr";
     public static final List<String> RESOURCE_SHORTNAMES = singletonList(SHORT_NAME);
@@ -111,7 +111,7 @@ public class KafkaRebalance extends CustomResource implements UnknownPropertyPre
         super.setMetadata(metadata);
     }
 
-    @Description("The specification of the Kafka Cluster Rebalance.")
+    @Description("The specification of the Kafka Rebalance.")
     public KafkaRebalanceSpec getSpec() {
         return spec;
     }
@@ -121,7 +121,7 @@ public class KafkaRebalance extends CustomResource implements UnknownPropertyPre
     }
 
     @Override
-    @Description("The status of the Kafka Cluster Rebalance.")
+    @Description("The status of the Kafka Rebalance.")
     public KafkaRebalanceStatus getStatus() {
         return status;
     }

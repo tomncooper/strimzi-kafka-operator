@@ -2800,9 +2800,9 @@ Used in: xref:type-KafkaMirrorMaker2-{context}[`KafkaMirrorMaker2`]
 [options="header"]
 |====
 |Property       |Description
-|spec    1.2+<.<|The specification of the Kafka Cluster Rebalance.
+|spec    1.2+<.<|The specification of the Kafka Rebalance.
 |xref:type-KafkaRebalanceSpec-{context}[`KafkaRebalanceSpec`]
-|status  1.2+<.<|The status of the Kafka Cluster Rebalance.
+|status  1.2+<.<|The status of the Kafka Rebalance.
 |xref:type-KafkaRebalanceStatus-{context}[`KafkaRebalanceStatus`]
 |====
 
@@ -2834,7 +2834,7 @@ Used in: xref:type-KafkaRebalance-{context}[`KafkaRebalance`]
 |xref:type-Condition-{context}[`Condition`] array
 |observedGeneration  1.2+<.<|The generation of the CRD that was last reconciled by the operator.
 |integer
-|sessionId           1.2+<.<|The session identifier for requests to Cruise Control pertaining to this KafkaRebalance resource.
+|sessionId           1.2+<.<|The session identifier for requests to Cruise Control pertaining to this KafkaRebalance resource.This is used by the Kafka Rebalance operator to track the status of ongoing rebalancing operations.
 |string
 |optimizationResult  1.2+<.<|A JSON describing the optimization result.
 |map
