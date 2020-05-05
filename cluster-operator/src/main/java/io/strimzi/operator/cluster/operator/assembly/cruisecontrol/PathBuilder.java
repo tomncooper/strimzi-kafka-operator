@@ -4,6 +4,9 @@
  */
 package io.strimzi.operator.cluster.operator.assembly.cruisecontrol;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PathBuilder {
@@ -22,7 +25,11 @@ public class PathBuilder {
         } else {
             firstParam = false;
         }
-        constructedPath += parameter;
+        try {
+            constructedPath += URLEncoder.encode(parameter, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
         return this;
     }
 
@@ -32,7 +39,11 @@ public class PathBuilder {
         } else {
             firstParam = false;
         }
-        constructedPath += param.asPair(value);
+        try {
+            constructedPath += param.asPair(value);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
         return this;
     }
 
@@ -42,7 +53,11 @@ public class PathBuilder {
         } else {
             firstParam = false;
         }
-        constructedPath += param.asList(values);
+        try {
+            constructedPath += param.asList(values);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
         return this;
     }
 

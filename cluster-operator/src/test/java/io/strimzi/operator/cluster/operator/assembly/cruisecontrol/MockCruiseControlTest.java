@@ -53,16 +53,17 @@ public class MockCruiseControlTest {
 
         Future<CruiseControlUserTaskResponse> statusFuture = client.getUserTaskStatus(HOST, PORT, userTaskID);
 
-        if (pendingCalls > 0) {
-            for (int i = 1; i <= pendingCalls; i++) {
-                statusFuture = statusFuture.compose(response -> {
-                    context.verify(() -> assertThat(
-                            response.getJson().getString("Status"),
-                            is(CruiseControlUserTaskStatus.IN_EXECUTION.toString()))
-                    );
-                    return client.getUserTaskStatus(HOST, PORT, userTaskID);
-                });
-            }
+        Checkpoint checkpoint = context.checkpoint(pendingCalls + 1);
+
+        for (int i = 1; i <= pendingCalls; i++) {
+            statusFuture = statusFuture.compose(response -> {
+                context.verify(() -> assertThat(
+                        response.getJson().getString("Status"),
+                        is(CruiseControlUserTaskStatus.IN_EXECUTION.toString()))
+                );
+                checkpoint.flag();
+                return client.getUserTaskStatus(HOST, PORT, userTaskID);
+            });
         }
 
         statusFuture.compose(response -> {
@@ -70,10 +71,9 @@ public class MockCruiseControlTest {
                     response.getJson().getString("Status"),
                     is(CruiseControlUserTaskStatus.COMPLETED.toString()))
             );
+            checkpoint.flag();
             return Future.succeededFuture(response);
-        }).setHandler(context.succeeding(result -> {
-            context.completeNow();
-        }));
+        });
     }
 
     @Test

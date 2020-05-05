@@ -131,9 +131,14 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                             }
                         });
                     } else {
-                        result.fail(new CruiseControlRestException(
-                                "Unexpected status code " + response.statusCode() + " for POST request to " +
-                                host + ":" + port + path));
+                        response.bodyHandler(buffer -> {
+                            String userTaskID = response.getHeader(CC_REST_API_USER_ID_HEADER);
+                            String json = buffer.toJsonObject().toString();
+                            String errMsg = String.format(
+                                    "Unexpected status code %d for rebalance request (%s) to %s:%d%s with message %s",
+                                    response.statusCode(), userTaskID, host, port, path, json);
+                            result.fail(new CruiseControlRestException(errMsg));
+                        });
                     }
                 })
                 .exceptionHandler(result::fail);

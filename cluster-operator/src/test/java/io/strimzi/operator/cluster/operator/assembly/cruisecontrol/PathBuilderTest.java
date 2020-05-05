@@ -6,6 +6,9 @@ package io.strimzi.operator.cluster.operator.assembly.cruisecontrol;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,21 +25,25 @@ public class PathBuilderTest {
 
     private static final List<String> GOALS = Arrays.asList("goal.one", "goal.two", "goal.three", "goal.four", "goal.five");
 
-    private String getExpectedRebalanceString() {
+    private String getExpectedRebalanceString() throws UnsupportedEncodingException {
 
         StringBuilder expectedQuery = new StringBuilder(
                 CruiseControlEndpoints.REBALANCE.path + "?" +
                         CruiseControlParameters.JSON.key + "=true&" +
                         CruiseControlParameters.DRY_RUN.key + "=false&" +
                         CruiseControlParameters.VERBOSE.key + "=true&" +
+                        CruiseControlParameters.SKIP_HARD_GOAL_CHECK.key + "=false&" +
                         CruiseControlParameters.GOALS.key + "=");
 
+        StringBuilder goalStringBuilder = new StringBuilder();
         for (int i = 0; i < GOALS.size(); i++) {
-            expectedQuery.append(GOALS.get(i));
+            goalStringBuilder.append(GOALS.get(i));
             if (i < GOALS.size() - 1) {
-                expectedQuery.append(",");
+                goalStringBuilder.append(",");
             }
         }
+
+        expectedQuery.append(URLEncoder.encode(goalStringBuilder.toString(), StandardCharsets.UTF_8.toString()));
 
         return expectedQuery.toString();
     }
@@ -54,12 +61,13 @@ public class PathBuilderTest {
     }
 
     @Test
-    public void testQueryStringList() {
+    public void testQueryStringList() throws UnsupportedEncodingException {
 
         String path = new PathBuilder(CruiseControlEndpoints.REBALANCE)
                 .addParameter(CruiseControlParameters.JSON, "true")
                 .addParameter(CruiseControlParameters.DRY_RUN, "false")
                 .addParameter(CruiseControlParameters.VERBOSE, "true")
+                .addParameter(CruiseControlParameters.SKIP_HARD_GOAL_CHECK, "false")
                 .addParameter(CruiseControlParameters.GOALS, GOALS)
                 .build();
 
@@ -69,7 +77,7 @@ public class PathBuilderTest {
     }
 
     @Test
-    public void testQueryRebalanceOptions() {
+    public void testQueryRebalanceOptions() throws UnsupportedEncodingException {
 
         RebalanceOptions options = new RebalanceOptions.RebalanceOptionsBuilder()
                 .withVerboseResponse()

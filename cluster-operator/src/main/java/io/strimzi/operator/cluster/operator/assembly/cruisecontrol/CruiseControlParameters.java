@@ -4,6 +4,10 @@
  */
 package io.strimzi.operator.cluster.operator.assembly.cruisecontrol;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 public enum CruiseControlParameters {
 
     DRY_RUN("dryrun"),
@@ -20,12 +24,12 @@ public enum CruiseControlParameters {
         this.key = key;
     }
 
-    public String asPair(String value) {
-        return key + "=" + value;
+    public String asPair(String value) throws UnsupportedEncodingException {
+        return key + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
     }
 
-    public String asList(Iterable<String> values) {
-        return key + "=" + String.join(",", values);
+    public String asList(Iterable<String> values) throws UnsupportedEncodingException {
+        return key + "=" + URLEncoder.encode(String.join(",", values), StandardCharsets.UTF_8.toString());
     }
 
 }
