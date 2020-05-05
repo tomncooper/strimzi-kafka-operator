@@ -18,7 +18,7 @@ public interface CruiseControlApi {
 
     Future<CruiseControlResponse> getCruiseControlState(String host, int port, boolean verbose);
     Future<CruiseControlRebalanceResponse> rebalance(String host, int port, RebalanceOptions options, String userTaskID);
-    Future<CruiseControlResponse> getUserTaskStatus(String host, int port, String userTaskId);
+    Future<CruiseControlUserTaskResponse> getUserTaskStatus(String host, int port, String userTaskId);
     Future<CruiseControlResponse> stopExecution(String host, int port);
 
 }

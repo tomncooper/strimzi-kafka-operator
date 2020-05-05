@@ -51,7 +51,7 @@ public class MockCruiseControlTest {
 
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
 
-        Future<CruiseControlResponse> statusFuture = client.getUserTaskStatus(HOST, PORT, userTaskID);
+        Future<CruiseControlUserTaskResponse> statusFuture = client.getUserTaskStatus(HOST, PORT, userTaskID);
 
         if (pendingCalls > 0) {
             for (int i = 1; i <= pendingCalls; i++) {
@@ -109,7 +109,7 @@ public class MockCruiseControlTest {
 
         MockCruiseControl.setupCCUserTasksResponse(ccServer, pendingCalls1);
 
-        Future<CruiseControlResponse> statusFuture = client.getUserTaskStatus(HOST, PORT, userTaskID);
+        Future<CruiseControlUserTaskResponse> statusFuture = client.getUserTaskStatus(HOST, PORT, userTaskID);
 
         for (int i = 1; i <= pendingCalls1; i++) {
             statusFuture = statusFuture.compose(response -> {

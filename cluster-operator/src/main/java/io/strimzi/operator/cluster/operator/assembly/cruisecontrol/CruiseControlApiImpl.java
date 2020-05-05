@@ -149,9 +149,9 @@ public class CruiseControlApiImpl implements CruiseControlApi {
 
     @Override
     @SuppressWarnings("deprecation")
-    public Future<CruiseControlResponse> getUserTaskStatus(String host, int port, String userTaskId) {
+    public Future<CruiseControlUserTaskResponse> getUserTaskStatus(String host, int port, String userTaskId) {
 
-        Promise<CruiseControlResponse> result = Promise.promise();
+        Promise<CruiseControlUserTaskResponse> result = Promise.promise();
         HttpClientOptions options = new HttpClientOptions().setLogActivity(HTTP_CLIENT_ACTIVITY_LOGGING);
 
         PathBuilder pathBuilder = new PathBuilder(CruiseControlEndpoints.USER_TASKS)
@@ -177,7 +177,7 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                             if (json.containsKey(CC_REST_API_ERROR_KEY)) {
                                 result.fail(json.getString(CC_REST_API_ERROR_KEY));
                             } else {
-                                CruiseControlResponse ccResponse = new CruiseControlResponse(userTaskID, json);
+                                CruiseControlUserTaskResponse ccResponse = new CruiseControlUserTaskResponse(userTaskID, json);
                                 result.complete(ccResponse);
                             }
                         });
@@ -185,7 +185,15 @@ public class CruiseControlApiImpl implements CruiseControlApi {
                         response.bodyHandler(buffer -> {
                             JsonObject json = buffer.toJsonObject();
                             if (json.containsKey(CC_REST_API_ERROR_KEY)) {
-                                result.fail(json.getString(CC_REST_API_ERROR_KEY));
+                                if (json.getString(CC_REST_API_ERROR_KEY).contains("Error happened in fetching response for task")) {
+                                    // This is to deal with a bug in the CC rest API that will error out if you ask for fetch_completed_task=true
+                                    // for a task that has COMPLETED_WITH_ERROR. Upstream Bug: https://github.com/linkedin/cruise-control/issues/1187
+                                    CruiseControlUserTaskResponse ccResponse = new CruiseControlUserTaskResponse(null, json);
+                                    ccResponse.setCompletedWithError(true);
+                                    result.complete(ccResponse);
+                                } else {
+                                    result.fail(json.getString(CC_REST_API_ERROR_KEY));
+                                }
                             }
                         });
                     } else {

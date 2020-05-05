@@ -25,7 +25,7 @@ import io.strimzi.operator.cluster.model.NoSuchResourceException;
 import io.strimzi.operator.cluster.model.StatusDiff;
 import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlApi;
 import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlApiImpl;
-import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlResponse;
+import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlUserTaskResponse;
 import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlUserTaskStatus;
 import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.RebalanceOptions;
 import io.strimzi.operator.cluster.operator.resource.ResourceOperatorSupplier;
@@ -582,10 +582,20 @@ public class KafkaRebalanceAssemblyOperator
                                     //       an ongoing rebalance. We may need to add an Error state to the state machine.
                                     apiClient.getUserTaskStatus(host, CruiseControl.REST_API_PORT, sessionId).setHandler(userTaskResult -> {
                                         if (userTaskResult.succeeded()) {
-                                            CruiseControlResponse response = userTaskResult.result();
+                                            CruiseControlUserTaskResponse response = userTaskResult.result();
                                             JsonObject taskStatusJson = response.getJson();
-                                            String taskStatusStr = taskStatusJson.getString("Status");
-                                            CruiseControlUserTaskStatus taskStatus = CruiseControlUserTaskStatus.lookup(taskStatusStr);
+                                            CruiseControlUserTaskStatus taskStatus;
+                                            // Due to a bug in the CC rest API (https://github.com/linkedin/cruise-control/issues/1187), if we ask
+                                            // for the status of a task that has COMPLETED_WITH_ERROR with fetch_completed_task=true, will will get
+                                            // 500 error instead of the task status. So the client currently handles this case and sets a flag in
+                                            // the CC response object.
+                                            if (response.completedWithError()) {
+                                                log.debug("User tasks end-point returned {} for task: {}", CruiseControlUserTaskStatus.COMPLETED_WITH_ERROR, sessionId);
+                                                taskStatus = CruiseControlUserTaskStatus.COMPLETED_WITH_ERROR;
+                                            } else {
+                                                String taskStatusStr = taskStatusJson.getString("Status");
+                                                taskStatus = CruiseControlUserTaskStatus.lookup(taskStatusStr);
+                                            }
                                             switch (taskStatus) {
                                                 case COMPLETED:
                                                     vertx.cancelTimer(t);
