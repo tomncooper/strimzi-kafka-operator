@@ -1562,7 +1562,7 @@ Used in: xref:type-Kafka-{context}[`Kafka`]
 [id='type-Condition-{context}']
 ### `Condition` schema reference
 
-Used in: xref:type-KafkaBridgeStatus-{context}[`KafkaBridgeStatus`], xref:type-KafkaClusterRebalanceStatus-{context}[`KafkaClusterRebalanceStatus`], xref:type-KafkaConnectorStatus-{context}[`KafkaConnectorStatus`], xref:type-KafkaConnectS2IStatus-{context}[`KafkaConnectS2IStatus`], xref:type-KafkaConnectStatus-{context}[`KafkaConnectStatus`], xref:type-KafkaMirrorMaker2Status-{context}[`KafkaMirrorMaker2Status`], xref:type-KafkaMirrorMakerStatus-{context}[`KafkaMirrorMakerStatus`], xref:type-KafkaStatus-{context}[`KafkaStatus`], xref:type-KafkaTopicStatus-{context}[`KafkaTopicStatus`], xref:type-KafkaUserStatus-{context}[`KafkaUserStatus`]
+Used in: xref:type-KafkaBridgeStatus-{context}[`KafkaBridgeStatus`], xref:type-KafkaConnectorStatus-{context}[`KafkaConnectorStatus`], xref:type-KafkaConnectS2IStatus-{context}[`KafkaConnectS2IStatus`], xref:type-KafkaConnectStatus-{context}[`KafkaConnectStatus`], xref:type-KafkaMirrorMaker2Status-{context}[`KafkaMirrorMaker2Status`], xref:type-KafkaMirrorMakerStatus-{context}[`KafkaMirrorMakerStatus`], xref:type-KafkaRebalanceStatus-{context}[`KafkaRebalanceStatus`], xref:type-KafkaStatus-{context}[`KafkaStatus`], xref:type-KafkaTopicStatus-{context}[`KafkaTopicStatus`], xref:type-KafkaUserStatus-{context}[`KafkaUserStatus`]
 
 
 [options="header"]
@@ -2793,23 +2793,23 @@ Used in: xref:type-KafkaMirrorMaker2-{context}[`KafkaMirrorMaker2`]
 |map array
 |====
 
-[id='type-KafkaClusterRebalance-{context}']
-### `KafkaClusterRebalance` schema reference
+[id='type-KafkaRebalance-{context}']
+### `KafkaRebalance` schema reference
 
 
 [options="header"]
 |====
 |Property       |Description
 |spec    1.2+<.<|The specification of the Kafka Cluster Rebalance.
-|xref:type-KafkaClusterRebalanceSpec-{context}[`KafkaClusterRebalanceSpec`]
+|xref:type-KafkaRebalanceSpec-{context}[`KafkaRebalanceSpec`]
 |status  1.2+<.<|The status of the Kafka Cluster Rebalance.
-|xref:type-KafkaClusterRebalanceStatus-{context}[`KafkaClusterRebalanceStatus`]
+|xref:type-KafkaRebalanceStatus-{context}[`KafkaRebalanceStatus`]
 |====
 
-[id='type-KafkaClusterRebalanceSpec-{context}']
-### `KafkaClusterRebalanceSpec` schema reference
+[id='type-KafkaRebalanceSpec-{context}']
+### `KafkaRebalanceSpec` schema reference
 
-Used in: xref:type-KafkaClusterRebalance-{context}[`KafkaClusterRebalance`]
+Used in: xref:type-KafkaRebalance-{context}[`KafkaRebalance`]
 
 
 [options="header"]
@@ -2821,10 +2821,10 @@ Used in: xref:type-KafkaClusterRebalance-{context}[`KafkaClusterRebalance`]
 |boolean
 |====
 
-[id='type-KafkaClusterRebalanceStatus-{context}']
-### `KafkaClusterRebalanceStatus` schema reference
+[id='type-KafkaRebalanceStatus-{context}']
+### `KafkaRebalanceStatus` schema reference
 
-Used in: xref:type-KafkaClusterRebalance-{context}[`KafkaClusterRebalance`]
+Used in: xref:type-KafkaRebalance-{context}[`KafkaRebalance`]
 
 
 [options="header"]
@@ -2834,7 +2834,7 @@ Used in: xref:type-KafkaClusterRebalance-{context}[`KafkaClusterRebalance`]
 |xref:type-Condition-{context}[`Condition`] array
 |observedGeneration  1.2+<.<|The generation of the CRD that was last reconciled by the operator.
 |integer
-|sessionId           1.2+<.<|The session identifier for requests to Cruise Control pertaining to this KafkaClusterRebalance resource.
+|sessionId           1.2+<.<|The session identifier for requests to Cruise Control pertaining to this KafkaRebalance resource.
 |string
 |optimizationResult  1.2+<.<|A JSON describing the optimization result.
 |map

@@ -15,29 +15,29 @@ import org.junit.jupiter.api.Test;
  * I.e. that such instance resources obtained from POJOs are valid according to the schema
  * validation done by K8S.
  */
-public class KafkaClusterRebalanceCrdIT extends AbstractCrdIT {
+public class KafkaRebalanceCrdIT extends AbstractCrdIT {
 
-    public static final String NAMESPACE = "kafkaclusterrebalance-crd-it";
+    public static final String NAMESPACE = "kafkarebalance-crd-it";
 
     @Test
-    void testKafkaClusterRebalanceMinimal() {
-        createDelete(KafkaClusterRebalance.class, "KafkaClusterRebalance-minimal.yaml");
+    void testKafkaRebalanceMinimal() {
+        createDelete(KafkaRebalance.class, "KafkaRebalance-minimal.yaml");
     }
 
     @Test
-    void testKafkaClusterRebalanceWithGoals() {
-        createDelete(KafkaClusterRebalance.class, "KafkaClusterRebalance-with-goals.yaml");
+    void testKafkaRebalanceWithGoals() {
+        createDelete(KafkaRebalance.class, "KafkaRebalance-with-goals.yaml");
     }
 
     @Test
-    void testKafkaClusterRebalanceWithGoalsSkipHardGoalCheck() {
-        createDelete(KafkaClusterRebalance.class, "KafkaClusterRebalance-with-goals-skip-hard-goal-check.yaml");
+    void testKafkaRebalanceWithGoalsSkipHardGoalCheck() {
+        createDelete(KafkaRebalance.class, "KafkaRebalance-with-goals-skip-hard-goal-check.yaml");
     }
 
     @BeforeAll
     void setupEnvironment() {
         cluster.createNamespace(NAMESPACE);
-        cluster.createCustomResources(TestUtils.CRD_KAFKA_CLUSTER_REBALANCE);
+        cluster.createCustomResources(TestUtils.CRD_KAFKA_REBALANCE);
     }
 
     @AfterAll

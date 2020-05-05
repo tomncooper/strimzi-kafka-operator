@@ -14,7 +14,7 @@ import io.fabric8.kubernetes.api.model.Doneable;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.CustomResource;
 import io.strimzi.api.kafka.model.status.HasStatus;
-import io.strimzi.api.kafka.model.status.KafkaClusterRebalanceStatus;
+import io.strimzi.api.kafka.model.status.KafkaRebalanceStatus;
 import io.strimzi.crdgenerator.annotations.Crd;
 import io.strimzi.crdgenerator.annotations.Description;
 import io.sundr.builder.annotations.Buildable;
@@ -31,19 +31,19 @@ import static java.util.Collections.unmodifiableList;
 
 @JsonDeserialize
 @Crd(
-        apiVersion = KafkaClusterRebalance.CRD_API_VERSION,
+        apiVersion = KafkaRebalance.CRD_API_VERSION,
         spec = @Crd.Spec(
                 names = @Crd.Spec.Names(
-                        kind = KafkaClusterRebalance.RESOURCE_KIND,
-                        plural = KafkaClusterRebalance.RESOURCE_PLURAL,
-                        shortNames = {KafkaClusterRebalance.SHORT_NAME}
+                        kind = KafkaRebalance.RESOURCE_KIND,
+                        plural = KafkaRebalance.RESOURCE_PLURAL,
+                        shortNames = {KafkaRebalance.SHORT_NAME}
                 ),
-                group = KafkaClusterRebalance.RESOURCE_GROUP,
-                scope = KafkaClusterRebalance.SCOPE,
-                version = KafkaClusterRebalance.V1ALPHA1,
+                group = KafkaRebalance.RESOURCE_GROUP,
+                scope = KafkaRebalance.SCOPE,
+                version = KafkaRebalance.V1ALPHA1,
                 versions = {
                         @Crd.Spec.Version(
-                                name = KafkaClusterRebalance.V1ALPHA1,
+                                name = KafkaRebalance.V1ALPHA1,
                                 served = true,
                                 storage = true
                         )
@@ -62,27 +62,27 @@ import static java.util.Collections.unmodifiableList;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"apiVersion", "kind", "metadata", "spec"})
 @EqualsAndHashCode
-public class KafkaClusterRebalance extends CustomResource implements UnknownPropertyPreserving, HasStatus<KafkaClusterRebalanceStatus> {
+public class KafkaRebalance extends CustomResource implements UnknownPropertyPreserving, HasStatus<KafkaRebalanceStatus> {
 
     private static final long serialVersionUID = 1L;
 
     public static final String SCOPE = "Namespaced";
     public static final String V1ALPHA1 = "v1alpha1";
     public static final List<String> VERSIONS = unmodifiableList(asList(V1ALPHA1));
-    public static final String RESOURCE_KIND = "KafkaClusterRebalance";
+    public static final String RESOURCE_KIND = "KafkaRebalance";
     public static final String RESOURCE_LIST_KIND = RESOURCE_KIND + "List";
     public static final String RESOURCE_GROUP = "kafka.strimzi.io";
-    public static final String RESOURCE_PLURAL = "kafkaclusterrebalances";
-    public static final String RESOURCE_SINGULAR = "kafkaclusterrebalance";
+    public static final String RESOURCE_PLURAL = "kafkarebalances";
+    public static final String RESOURCE_SINGULAR = "kafkarebalance";
     public static final String CRD_API_VERSION = "apiextensions.k8s.io/v1beta1";
     public static final String CRD_NAME = RESOURCE_PLURAL + "." + RESOURCE_GROUP;
-    public static final String SHORT_NAME = "kcr";
+    public static final String SHORT_NAME = "kr";
     public static final List<String> RESOURCE_SHORTNAMES = singletonList(SHORT_NAME);
 
     private String apiVersion;
     private ObjectMeta metadata;
-    private KafkaClusterRebalanceSpec spec;
-    private KafkaClusterRebalanceStatus status;
+    private KafkaRebalanceSpec spec;
+    private KafkaRebalanceStatus status;
     private Map<String, Object> additionalProperties = new HashMap<>(0);
 
     @JsonProperty("kind")
@@ -112,21 +112,21 @@ public class KafkaClusterRebalance extends CustomResource implements UnknownProp
     }
 
     @Description("The specification of the Kafka Cluster Rebalance.")
-    public KafkaClusterRebalanceSpec getSpec() {
+    public KafkaRebalanceSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(KafkaClusterRebalanceSpec spec) {
+    public void setSpec(KafkaRebalanceSpec spec) {
         this.spec = spec;
     }
 
     @Override
     @Description("The status of the Kafka Cluster Rebalance.")
-    public KafkaClusterRebalanceStatus getStatus() {
+    public KafkaRebalanceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(KafkaClusterRebalanceStatus status) {
+    public void setStatus(KafkaRebalanceStatus status) {
         this.status = status;
     }
 

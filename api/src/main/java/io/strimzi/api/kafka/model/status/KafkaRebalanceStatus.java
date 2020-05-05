@@ -26,7 +26,7 @@ import java.util.Map;
 @JsonPropertyOrder({ "conditions", "observedGeneration", "sessionId", "optimizationResult" })
 @EqualsAndHashCode
 @ToString(callSuper = true)
-public class KafkaClusterRebalanceStatus extends Status {
+public class KafkaRebalanceStatus extends Status {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,7 @@ public class KafkaClusterRebalanceStatus extends Status {
         this.optimizationResult = optimizationResult;
     }
 
-    @Description("The session identifier for requests to Cruise Control pertaining to this KafkaClusterRebalance resource.")
+    @Description("The session identifier for requests to Cruise Control pertaining to this KafkaRebalance resource.")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String getSessionId() {
         return sessionId;

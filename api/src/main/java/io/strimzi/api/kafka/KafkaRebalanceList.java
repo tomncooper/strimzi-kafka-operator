@@ -5,11 +5,11 @@
 package io.strimzi.api.kafka;
 
 import io.fabric8.kubernetes.client.CustomResourceList;
-import io.strimzi.api.kafka.model.KafkaClusterRebalance;
+import io.strimzi.api.kafka.model.KafkaRebalance;
 
 /**
- * A {@code CustomResourceList<KafkaClusterRebalance>} required for using Fabric8 CRD support.
+ * A {@code CustomResourceList<KafkaRebalance>} required for using Fabric8 CRD support.
  */
-public class KafkaClusterRebalanceList extends CustomResourceList<KafkaClusterRebalance> {
+public class KafkaRebalanceList extends CustomResourceList<KafkaRebalance> {
     private static final long serialVersionUID = 1L;
 }

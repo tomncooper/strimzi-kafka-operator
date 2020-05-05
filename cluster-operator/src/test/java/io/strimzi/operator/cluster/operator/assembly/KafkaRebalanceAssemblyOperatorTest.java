@@ -7,13 +7,13 @@ package io.strimzi.operator.cluster.operator.assembly;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.strimzi.api.kafka.KafkaClusterRebalanceList;
-import io.strimzi.api.kafka.model.DoneableKafkaClusterRebalance;
+import io.strimzi.api.kafka.KafkaRebalanceList;
+import io.strimzi.api.kafka.model.DoneableKafkaRebalance;
 import io.strimzi.api.kafka.model.KafkaBridge;
-import io.strimzi.api.kafka.model.KafkaClusterRebalance;
-import io.strimzi.api.kafka.model.KafkaClusterRebalanceBuilder;
-import io.strimzi.api.kafka.model.KafkaClusterRebalanceSpec;
-import io.strimzi.api.kafka.model.KafkaClusterRebalanceSpecBuilder;
+import io.strimzi.api.kafka.model.KafkaRebalance;
+import io.strimzi.api.kafka.model.KafkaRebalanceBuilder;
+import io.strimzi.api.kafka.model.KafkaRebalanceSpec;
+import io.strimzi.api.kafka.model.KafkaRebalanceSpecBuilder;
 import io.strimzi.api.kafka.model.status.Condition;
 import io.strimzi.operator.KubernetesVersion;
 import io.strimzi.operator.PlatformFeaturesAvailability;
@@ -48,7 +48,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(VertxExtension.class)
-public class KafkaClusterRebalanceAssemblyOperatorTest {
+public class KafkaRebalanceAssemblyOperatorTest {
 
     private static final String HOST = "localhost";
     private static final String CLUSTER_NAMESPACE = "cruise-control-namespace";
@@ -56,7 +56,7 @@ public class KafkaClusterRebalanceAssemblyOperatorTest {
 
     private final KubernetesVersion kubernetesVersion = KubernetesVersion.V1_11;
 
-    private static final Logger log = LogManager.getLogger(KafkaClusterRebalanceAssemblyOperatorTest.class.getName());
+    private static final Logger log = LogManager.getLogger(KafkaRebalanceAssemblyOperatorTest.class.getName());
 
     private static ClientAndServer ccServer;
 
@@ -86,14 +86,14 @@ public class KafkaClusterRebalanceAssemblyOperatorTest {
         labels.put(Labels.STRIMZI_CLUSTER_LABEL, "my-test-cluster");
         ObjectMeta meta = new ObjectMetaBuilder().withLabels(labels).withName(CLUSTER_NAME).withNamespace(CLUSTER_NAMESPACE).build();
 
-        KafkaClusterRebalanceSpec rebalanceSpec = new KafkaClusterRebalanceSpecBuilder().build();
+        KafkaRebalanceSpec rebalanceSpec = new KafkaRebalanceSpecBuilder().build();
 
         Condition newRebalanceCondition = new Condition();
-        newRebalanceCondition.setType(String.valueOf(KafkaClusterRebalanceAssemblyOperator.State.New));
+        newRebalanceCondition.setType(String.valueOf(KafkaRebalanceAssemblyOperator.State.New));
 
-        KafkaClusterRebalanceBuilder kcrBuilder = new KafkaClusterRebalanceBuilder();
+        KafkaRebalanceBuilder kcrBuilder = new KafkaRebalanceBuilder();
 
-        KafkaClusterRebalance kcRebalance = kcrBuilder
+        KafkaRebalance kcRebalance = kcrBuilder
                 .withMetadata(meta)
                 .withSpec(rebalanceSpec)
                 .withNewStatus()
@@ -103,16 +103,16 @@ public class KafkaClusterRebalanceAssemblyOperatorTest {
 
         ResourceOperatorSupplier supplier = ResourceUtils.supplierWithMocks(true);
         PlatformFeaturesAvailability pfa = new PlatformFeaturesAvailability(true, kubernetesVersion);
-        KafkaClusterRebalanceAssemblyOperator kcrao = new KafkaClusterRebalanceAssemblyOperator(vertx, pfa, supplier, HOST);
+        KafkaRebalanceAssemblyOperator kcrao = new KafkaRebalanceAssemblyOperator(vertx, pfa, supplier, HOST);
 
         CrdOperator<KubernetesClient,
-                KafkaClusterRebalance,
-                KafkaClusterRebalanceList,
-                DoneableKafkaClusterRebalance> mockRebalanceOps = supplier.kafkaClusterRebalanceOperator;
+                KafkaRebalance,
+                KafkaRebalanceList,
+                DoneableKafkaRebalance> mockRebalanceOps = supplier.kafkaRebalanceOperator;
 
         when(mockRebalanceOps.get(CLUSTER_NAMESPACE, CLUSTER_NAME)).thenReturn(kcRebalance);
         when(mockRebalanceOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(kcRebalance));
-        when(mockRebalanceOps.updateStatusAsync(any(KafkaClusterRebalance.class))).thenReturn(Future.succeededFuture(kcRebalance));
+        when(mockRebalanceOps.updateStatusAsync(any(KafkaRebalance.class))).thenReturn(Future.succeededFuture(kcRebalance));
 
         Checkpoint async = context.checkpoint();
         kcrao.createOrUpdate(
