@@ -7,9 +7,15 @@ package io.strimzi.operator.cluster.operator.assembly;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.strimzi.api.kafka.KafkaList;
 import io.strimzi.api.kafka.KafkaRebalanceList;
+import io.strimzi.api.kafka.model.CruiseControlSpec;
+import io.strimzi.api.kafka.model.CruiseControlSpecBuilder;
+import io.strimzi.api.kafka.model.DoneableKafka;
 import io.strimzi.api.kafka.model.DoneableKafkaRebalance;
+import io.strimzi.api.kafka.model.Kafka;
 import io.strimzi.api.kafka.model.KafkaBridge;
+import io.strimzi.api.kafka.model.KafkaBuilder;
 import io.strimzi.api.kafka.model.KafkaRebalance;
 import io.strimzi.api.kafka.model.KafkaRebalanceBuilder;
 import io.strimzi.api.kafka.model.KafkaRebalanceSpec;
@@ -17,6 +23,7 @@ import io.strimzi.api.kafka.model.KafkaRebalanceSpecBuilder;
 import io.strimzi.api.kafka.model.status.Condition;
 import io.strimzi.operator.KubernetesVersion;
 import io.strimzi.operator.PlatformFeaturesAvailability;
+import io.strimzi.operator.cluster.KafkaVersionTestUtils;
 import io.strimzi.operator.cluster.ResourceUtils;
 import io.strimzi.operator.cluster.model.CruiseControl;
 import io.strimzi.operator.cluster.operator.resource.cruisecontrol.MockCruiseControl;
@@ -59,6 +66,30 @@ public class KafkaRebalanceAssemblyOperatorTest {
     private static final Logger log = LogManager.getLogger(KafkaRebalanceAssemblyOperatorTest.class.getName());
 
     private static ClientAndServer ccServer;
+
+    private final String namespace = "test";
+    private final String cluster = "foo";
+    private final int replicas = 1;
+    private final String image = "my-kafka-image";
+    private final int healthDelay = 120;
+    private final int healthTimeout = 30;
+
+    private final String version = KafkaVersionTestUtils.DEFAULT_KAFKA_VERSION;
+    private final String ccImage = "my-cruise-control-image";
+
+    private final CruiseControlSpec cruiseControlSpec = new CruiseControlSpecBuilder()
+            .withImage(ccImage)
+            .build();
+
+    private final Kafka kafka =
+            new KafkaBuilder(ResourceUtils.createKafkaCluster(namespace, cluster, replicas, image, healthDelay, healthTimeout))
+                    .editSpec()
+                        .editKafka()
+                            .withVersion(version)
+                        .endKafka()
+                        .withCruiseControl(cruiseControlSpec)
+                    .endSpec()
+                    .build();
 
     @BeforeAll
     public static void before() throws IOException, URISyntaxException {
@@ -110,6 +141,12 @@ public class KafkaRebalanceAssemblyOperatorTest {
                 KafkaRebalanceList,
                 DoneableKafkaRebalance> mockRebalanceOps = supplier.kafkaRebalanceOperator;
 
+        CrdOperator<KubernetesClient,
+                Kafka,
+                KafkaList,
+                DoneableKafka> mockKafkaOps = supplier.kafkaOperator;
+
+        when(mockKafkaOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(kafka));
         when(mockRebalanceOps.get(CLUSTER_NAMESPACE, CLUSTER_NAME)).thenReturn(kcRebalance);
         when(mockRebalanceOps.getAsync(anyString(), anyString())).thenReturn(Future.succeededFuture(kcRebalance));
         when(mockRebalanceOps.updateStatusAsync(any(KafkaRebalance.class))).thenReturn(Future.succeededFuture(kcRebalance));
