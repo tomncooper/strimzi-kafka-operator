@@ -123,7 +123,7 @@ public class ClusterOperator extends AbstractVerticle {
         }
 
         watchFutures.add(AbstractConnectOperator.createConnectorWatch(kafkaConnectAssemblyOperator, kafkaConnectS2IAssemblyOperator, namespace));
-        watchFutures.add(kafkaRebalanceAssemblyOperator.createClusterRebalanceWatch(namespace));
+        watchFutures.add(kafkaRebalanceAssemblyOperator.createRebalanceWatch(namespace));
 
         CompositeFuture.join(watchFutures)
                 .compose(f -> {
