@@ -2,7 +2,7 @@
  * Copyright Strimzi authors.
  * License: Apache License 2.0 (see the file LICENSE or http://apache.org/licenses/LICENSE-2.0.html).
  */
-package io.strimzi.operator.cluster.operator.assembly.cruisecontrol;
+package io.strimzi.operator.cluster.operator.resource.cruisecontrol;
 
 import io.vertx.core.Vertx;
 import io.vertx.junit5.Checkpoint;
@@ -18,7 +18,7 @@ import org.mockserver.integration.ClientAndServer;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlApi.CC_REST_API_SUMMARY;
+import static io.strimzi.operator.cluster.operator.resource.cruisecontrol.CruiseControlApi.CC_REST_API_SUMMARY;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;

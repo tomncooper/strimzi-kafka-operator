@@ -19,7 +19,7 @@ import io.strimzi.operator.KubernetesVersion;
 import io.strimzi.operator.PlatformFeaturesAvailability;
 import io.strimzi.operator.cluster.ResourceUtils;
 import io.strimzi.operator.cluster.model.CruiseControl;
-import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.MockCruiseControl;
+import io.strimzi.operator.cluster.operator.resource.cruisecontrol.MockCruiseControl;
 import io.strimzi.operator.cluster.operator.resource.ResourceOperatorSupplier;
 import io.strimzi.operator.common.Reconciliation;
 import io.strimzi.operator.common.model.Labels;

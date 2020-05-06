@@ -23,11 +23,11 @@ import io.strimzi.operator.cluster.model.CruiseControl;
 import io.strimzi.operator.cluster.model.InvalidResourceException;
 import io.strimzi.operator.cluster.model.NoSuchResourceException;
 import io.strimzi.operator.cluster.model.StatusDiff;
-import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlApi;
-import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlApiImpl;
-import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlUserTaskResponse;
-import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlUserTaskStatus;
-import io.strimzi.operator.cluster.operator.assembly.cruisecontrol.RebalanceOptions;
+import io.strimzi.operator.cluster.operator.resource.cruisecontrol.CruiseControlApi;
+import io.strimzi.operator.cluster.operator.resource.cruisecontrol.CruiseControlApiImpl;
+import io.strimzi.operator.cluster.operator.resource.cruisecontrol.CruiseControlUserTaskResponse;
+import io.strimzi.operator.cluster.operator.resource.cruisecontrol.CruiseControlUserTaskStatus;
+import io.strimzi.operator.cluster.operator.resource.cruisecontrol.RebalanceOptions;
 import io.strimzi.operator.cluster.operator.resource.ResourceOperatorSupplier;
 import io.strimzi.operator.common.AbstractOperator;
 import io.strimzi.operator.common.Annotations;
@@ -47,7 +47,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import static io.strimzi.operator.cluster.operator.assembly.cruisecontrol.CruiseControlApi.CC_REST_API_SUMMARY;
+import static io.strimzi.operator.cluster.operator.resource.cruisecontrol.CruiseControlApi.CC_REST_API_SUMMARY;
 
 /**
  * <p>Assembly operator for a "Kafka Cluster Rebalance" assembly, which interacts with Cruise Control REST API</p>
