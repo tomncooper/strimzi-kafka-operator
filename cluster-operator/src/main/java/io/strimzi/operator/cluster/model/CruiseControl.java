@@ -256,7 +256,8 @@ public class CruiseControl extends AbstractModel {
      * @throws UnsupportedOperationException If the configuration contains self.healing.goals configurations.
      */
     public static void checkGoals(CruiseControlConfiguration configuration) {
-        // If self healing goals are defined then these take precedence
+        // If self healing goals are defined then these take precedence.
+        // Right now, self.healing.goals must either be null or an empty list
         if (configuration.getConfigOption(CRUISE_CONTROL_SELF_HEALING_CONFIG_KEY) != null) {
             String selfHealingGoalsString = configuration.getConfigOption(CRUISE_CONTROL_SELF_HEALING_CONFIG_KEY);
             List<String> selfHealingGoals = Arrays.asList(selfHealingGoalsString.split("\\s*,\\s*"));
@@ -266,17 +267,8 @@ public class CruiseControl extends AbstractModel {
             }
         }
 
-        // Either self.healing.goals is null or it is an empty list
-        String anomalyGoalsString;
-        if (configuration.getConfigOption(CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY) != null) {
-            // The user has defined some anomaly detection goals
-            anomalyGoalsString = configuration.getConfigOption(CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY);
-        } else {
-            // No anomaly detection goals have been defined by the user, therefore the defaults defined in Cruise Control
-            // will be used.
-            anomalyGoalsString = CRUISE_CONTROL_DEFAULT_ANOMALY_DETECTION_GOALS;
-        }
-
+        // If no anomaly detection goals have been defined by the user, the defaults defined in Cruise Control will be used.
+        String anomalyGoalsString = configuration.getConfigOption(CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY, CRUISE_CONTROL_DEFAULT_ANOMALY_DETECTION_GOALS);
         Set<String> anomalyDetectionGoals = new HashSet<>(Arrays.asList(anomalyGoalsString.split("\\s*,\\s*")));
 
         String defaultGoalsString = configuration.getConfigOption(CRUISE_CONTROL_DEFAULT_GOALS_CONFIG_KEY);
