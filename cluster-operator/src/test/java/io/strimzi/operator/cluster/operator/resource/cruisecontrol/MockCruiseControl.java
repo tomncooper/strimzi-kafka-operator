@@ -28,6 +28,8 @@ import static org.mockserver.model.Header.header;
 
 public class MockCruiseControl {
 
+    private static final String CC_JSON_ROOT = "io/strimzi/operator/cluster/operator/assembly/CruiseControlJSON/";
+
     private static final int RESPONSE_DELAY_SEC = 1;
 
     private static final String SEP =  "-";
@@ -73,7 +75,7 @@ public class MockCruiseControl {
 
     private static String getJsonFromResource(String resource) throws URISyntaxException, IOException {
 
-        URI jsonURI = Objects.requireNonNull(MockCruiseControl.class.getClassLoader().getResource(resource)).toURI();
+        URI jsonURI = Objects.requireNonNull(MockCruiseControl.class.getClassLoader().getResource(CC_JSON_ROOT + resource)).toURI();
 
         Optional<String> json = Files.lines(Paths.get(jsonURI), UTF_8).reduce((x, y) -> x + y);
 

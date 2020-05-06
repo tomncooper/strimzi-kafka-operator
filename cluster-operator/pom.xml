@@ -302,12 +302,6 @@
                     <include>kafka-versions.yaml</include>
                 </includes>
             </resource>
-            <resource>
-                <directory>src/test/resources/io/strimzi/operator/cluster/operator/assembly/CruiseControlJSON</directory>
-                <includes>
-                    <include>*.json</include>
-                </includes>
-            </resource>
         </resources>
     </build>
 </project>
