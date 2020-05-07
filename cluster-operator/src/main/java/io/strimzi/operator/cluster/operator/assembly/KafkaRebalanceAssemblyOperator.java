@@ -358,10 +358,11 @@ public class KafkaRebalanceAssemblyOperator
                     });
     }
 
-    private Future<KafkaRebalanceStatus> computeNextStatus(Reconciliation reconciliation,
-                                                           String host, CruiseControlApi apiClient,
-                                                           KafkaRebalance kafkaRebalance, State currentState,
-                                                           RebalanceAnnotation rebalanceAnnotation, RebalanceOptions.RebalanceOptionsBuilder rebalanceOptionsBuilder) {
+    protected Future<KafkaRebalanceStatus> computeNextStatus(Reconciliation reconciliation,
+                                                             String host, CruiseControlApi apiClient,
+                                                             KafkaRebalance kafkaRebalance, State currentState,
+                                                             RebalanceAnnotation rebalanceAnnotation,
+                                                             RebalanceOptions.RebalanceOptionsBuilder rebalanceOptionsBuilder) {
         switch (currentState) {
             case New:
                 return onNew(reconciliation, host, apiClient, rebalanceOptionsBuilder);
@@ -597,7 +598,6 @@ public class KafkaRebalanceAssemblyOperator
                                     apiClient.stopExecution(host, CruiseControl.REST_API_PORT).setHandler(stopResult -> {
                                         if (stopResult.succeeded()) {
                                             p.complete(new KafkaRebalanceStatusBuilder()
-                                                    .withSessionId(null)
                                                     .addNewCondition().withNewType(State.Stopped.toString()).endCondition().build());
                                         } else {
                                             log.error("{}: Cruise Control stopping execution failed", reconciliation, stopResult.cause());
@@ -628,7 +628,6 @@ public class KafkaRebalanceAssemblyOperator
                                                     vertx.cancelTimer(t);
                                                     log.info("{}: Rebalance ({}) is now complete", reconciliation, sessionId);
                                                     p.complete(new KafkaRebalanceStatusBuilder()
-                                                            .withSessionId(null)
                                                             .withOptimizationResult(taskStatusJson.getJsonObject("summary").getMap())
                                                             .addNewCondition().withType(State.Ready.toString()).endCondition().build());
                                                     break;

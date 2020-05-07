@@ -64,7 +64,7 @@ public class CruiseControlClientTest {
     @Test
     public void testCCRebalance(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
 
-        MockCruiseControl.setupCCRebalanceResponse(ccServer);
+        MockCruiseControl.setupCCRebalanceResponse(ccServer, 0);
 
         RebalanceOptions rbOptions = new RebalanceOptions.RebalanceOptionsBuilder().build();
 
@@ -86,7 +86,7 @@ public class CruiseControlClientTest {
     @Test
     public void testCCRebalanceVerbose(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
 
-        MockCruiseControl.setupCCRebalanceResponse(ccServer);
+        MockCruiseControl.setupCCRebalanceResponse(ccServer, 0);
 
         RebalanceOptions rbOptions = new RebalanceOptions.RebalanceOptionsBuilder().withVerboseResponse().build();
 
@@ -112,7 +112,7 @@ public class CruiseControlClientTest {
     @Test
     public void testCCRebalanceNotEnoughValidWindowsException(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
 
-        MockCruiseControl.setupCCRebalanceResponse(ccServer);
+        MockCruiseControl.setupCCRebalanceNotEnoughDataError(ccServer);
 
         RebalanceOptions rbOptions = new RebalanceOptions.RebalanceOptionsBuilder().build();
 
@@ -132,7 +132,7 @@ public class CruiseControlClientTest {
     @Test
     public void testCCGetRebalanceUserTask(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
 
-        MockCruiseControl.setupCCUserTasksResponse(ccServer, 0);
+        MockCruiseControl.setupCCUserTasksResponseNoGoals(ccServer, 0, 0);
 
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
         String userTaskID = MockCruiseControl.REBALANCE_NO_GOALS_RESPONSE_UTID;
@@ -149,7 +149,7 @@ public class CruiseControlClientTest {
     @Test
     public void testCCGetRebalanceVerboseUserTask(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
 
-        MockCruiseControl.setupCCUserTasksResponse(ccServer, 0);
+        MockCruiseControl.setupCCUserTasksResponseNoGoals(ccServer, 0, 0);
 
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
         String userTaskID = MockCruiseControl.REBALANCE_NO_GOALS_VERBOSE_RESPONSE_UTID;

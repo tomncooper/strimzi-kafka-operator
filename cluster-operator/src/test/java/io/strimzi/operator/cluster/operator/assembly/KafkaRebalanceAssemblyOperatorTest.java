@@ -107,8 +107,8 @@ public class KafkaRebalanceAssemblyOperatorTest {
     public void testNewRebalance(Vertx vertx, VertxTestContext context) throws IOException, URISyntaxException {
 
         // Setup the rebalance user tasks endpoints with the number of pending calls before a response is received.
-        MockCruiseControl.setupCCRebalanceResponse(ccServer);
-        MockCruiseControl.setupCCUserTasksResponse(ccServer, 0);
+        MockCruiseControl.setupCCRebalanceResponse(ccServer, 0);
+        MockCruiseControl.setupCCUserTasksResponseNoGoals(ccServer, 0, 0);
 
         KubernetesClient client = new MockKube()
                 .withCustomResourceDefinition(Crds.kafkaRebalance(), KafkaRebalance.class, KafkaRebalanceList.class, DoneableKafkaRebalance.class)
