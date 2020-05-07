@@ -799,9 +799,14 @@ public class KafkaRebalanceAssemblyOperator
         return apiClient.rebalance(host, CruiseControl.REST_API_PORT, rebalanceOptionsBuilder.build(), userTaskID)
                 .map(response -> {
                     if (dryrun) {
-                        if (response.thereIsNotEnoughDataForProposal() || response.proposalIsStillCalculating()) {
-                            // If either there not enough data for a rebalance or it is still being processed we need to
-                            // re-request the proposal at a later stage so we move to the PendingProposal State.
+                        if (response.thereIsNotEnoughDataForProposal()) {
+                            // If there are not enough data for a rebalance, it's an actual error at Cruise Control level
+                            // and we need to re-request the proposal at a later stage so we move to the PendingProposal State.
+                            return new KafkaRebalanceStatusBuilder()
+                                    .addNewCondition().withNewType(State.PendingProposal.toString()).endCondition().build();
+                        } else if (response.proposalIsStillCalculating()) {
+                            // If rebalance proposal is still being processed we need to re-request the proposal at a later stage
+                            // with the corresponding session-id so we move to the PendingProposal State.
                             return new KafkaRebalanceStatusBuilder()
                                     .withNewSessionId(response.getUserTaskId())
                                     .addNewCondition().withNewType(State.PendingProposal.toString()).endCondition().build();

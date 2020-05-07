@@ -60,7 +60,6 @@ import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUIS
 import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY;
 import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_DEFAULT_ANOMALY_DETECTION_GOALS;
 import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_DEFAULT_GOALS_CONFIG_KEY;
-import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_DEFAULT_PROPERTIES_MAP;
 import static io.strimzi.operator.cluster.model.VolumeUtils.createConfigMapVolume;
 import static io.strimzi.operator.cluster.model.VolumeUtils.createSecretVolume;
 import static io.strimzi.operator.cluster.model.VolumeUtils.createVolumeMount;
@@ -235,7 +234,7 @@ public class CruiseControl extends AbstractModel {
 
     public static CruiseControl updateConfiguration(CruiseControlSpec spec, CruiseControl cruiseControl) {
         CruiseControlConfiguration userConfiguration = new CruiseControlConfiguration(spec.getConfig().entrySet());
-        for (Map.Entry<String, String> defaultEntry : CRUISE_CONTROL_DEFAULT_PROPERTIES_MAP.entrySet()) {
+        for (Map.Entry<String, String> defaultEntry : CruiseControlConfiguration.getCruiseControlDefaultPropertiesMap().entrySet()) {
             if (userConfiguration.getConfigOption(defaultEntry.getKey()) == null) {
                 userConfiguration.setConfigOption(defaultEntry.getKey(), defaultEntry.getValue());
             }

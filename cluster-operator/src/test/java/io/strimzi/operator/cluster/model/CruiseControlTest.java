@@ -55,7 +55,6 @@ import static io.strimzi.operator.cluster.model.CruiseControl.ENV_VAR_BROKER_INB
 import static io.strimzi.operator.cluster.model.CruiseControl.ENV_VAR_BROKER_OUTBOUND_NETWORK_KIB_PER_SECOND_CAPACITY;
 import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY;
 import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_DEFAULT_GOALS_CONFIG_KEY;
-import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_DEFAULT_PROPERTIES_MAP;
 import static io.strimzi.operator.cluster.model.cruisecontrol.Capacity.DEFAULT_BROKER_CPU_UTILIZATION_CAPACITY;
 import static io.strimzi.operator.cluster.model.cruisecontrol.Capacity.DEFAULT_BROKER_DISK_MIB_CAPACITY;
 import static io.strimzi.operator.cluster.model.cruisecontrol.Capacity.DEFAULT_BROKER_INBOUND_NETWORK_KIB_PER_SECOND_CAPACITY;
@@ -87,7 +86,7 @@ public class CruiseControlTest {
     private final Map<String, Object> zooConfig = singletonMap("foo", "bar");
 
     CruiseControlConfiguration configuration = new CruiseControlConfiguration(new HashMap<String, Object>() {{
-            putAll(CRUISE_CONTROL_DEFAULT_PROPERTIES_MAP);
+            putAll(CruiseControlConfiguration.getCruiseControlDefaultPropertiesMap());
             put("num.partition.metrics.windows", "2");
         }}.entrySet()
     );
