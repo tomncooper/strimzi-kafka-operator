@@ -32,8 +32,8 @@ public class KafkaRebalanceSpec implements UnknownPropertyPreserving, Serializab
 
     private Map<String, Object> additionalProperties = new HashMap<>(0);
 
-    @Description("A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal." +
-            "The supported goals are available at https://github.com/linkedin/cruise-control#goals." +
+    @Description("A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal. " +
+            "The supported goals are available at https://github.com/linkedin/cruise-control#goals. " +
             "If an empty goals list is provided, the goals declared in the default.goals Cruise Control configuration parameter are used.")
     public List<String> getGoals() {
         return goals;

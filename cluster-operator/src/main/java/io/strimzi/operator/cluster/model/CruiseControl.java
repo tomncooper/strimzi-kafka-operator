@@ -55,6 +55,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_SELF_HEALING_CONFIG_KEY;
+import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_GOALS;
+import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY;
+import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_DEFAULT_ANOMALY_DETECTION_GOALS;
+import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_DEFAULT_GOALS_CONFIG_KEY;
+import static io.strimzi.operator.cluster.model.CruiseControlConfiguration.CRUISE_CONTROL_DEFAULT_PROPERTIES_MAP;
 import static io.strimzi.operator.cluster.model.VolumeUtils.createConfigMapVolume;
 import static io.strimzi.operator.cluster.model.VolumeUtils.createSecretVolume;
 import static io.strimzi.operator.cluster.model.VolumeUtils.createVolumeMount;
@@ -63,14 +69,6 @@ public class CruiseControl extends AbstractModel {
     protected static final String APPLICATION_NAME = "cruise-control";
 
     public static final String CRUISE_CONTROL_METRIC_REPORTER = "com.linkedin.kafka.cruisecontrol.metricsreporter.CruiseControlMetricsReporter";
-
-    public static final String CRUISE_CONTROL_DEFAULT_GOALS_CONFIG_KEY = "default.goals";
-    public static final String CRUISE_CONTROL_SELF_HEALING_CONFIG_KEY = "self.healing.goals";
-    public static final String CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY = "anomaly.detection.goals";
-    public static final String CRUISE_CONTROL_DEFAULT_ANOMALY_DETECTION_GOALS =
-            "com.linkedin.kafka.cruisecontrol.analyzer.goals.RackAwareGoal, " +
-            "com.linkedin.kafka.cruisecontrol.analyzer.goals.ReplicaCapacityGoal, " +
-            "com.linkedin.kafka.cruisecontrol.analyzer.goals.DiskCapacityGoal";
 
     protected static final String CRUISE_CONTROL_CONTAINER_NAME = "cruise-control";
     protected static final String TLS_SIDECAR_NAME = "tls-sidecar";
@@ -237,7 +235,7 @@ public class CruiseControl extends AbstractModel {
 
     public static CruiseControl updateConfiguration(CruiseControlSpec spec, CruiseControl cruiseControl) {
         CruiseControlConfiguration userConfiguration = new CruiseControlConfiguration(spec.getConfig().entrySet());
-        for (Map.Entry<String, String> defaultEntry : userConfiguration.getCruiseControlDefaultPropertiesMap().entrySet()) {
+        for (Map.Entry<String, String> defaultEntry : CRUISE_CONTROL_DEFAULT_PROPERTIES_MAP.entrySet()) {
             if (userConfiguration.getConfigOption(defaultEntry.getKey()) == null) {
                 userConfiguration.setConfigOption(defaultEntry.getKey(), defaultEntry.getValue());
             }
@@ -271,13 +269,13 @@ public class CruiseControl extends AbstractModel {
         String anomalyGoalsString = configuration.getConfigOption(CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY, CRUISE_CONTROL_DEFAULT_ANOMALY_DETECTION_GOALS);
         Set<String> anomalyDetectionGoals = new HashSet<>(Arrays.asList(anomalyGoalsString.split("\\s*,\\s*")));
 
-        String defaultGoalsString = configuration.getConfigOption(CRUISE_CONTROL_DEFAULT_GOALS_CONFIG_KEY);
+        String defaultGoalsString = configuration.getConfigOption(CRUISE_CONTROL_DEFAULT_GOALS_CONFIG_KEY, CRUISE_CONTROL_GOALS);
         Set<String> defaultGoals = new HashSet<>(Arrays.asList(defaultGoalsString.split("\\s*,\\s*")));
 
         // Remove all the goals which are present in the default goals set from the anomaly detection goals
         anomalyDetectionGoals.removeAll(defaultGoals);
 
-        if (anomalyDetectionGoals.size() > 0) {
+        if (!anomalyDetectionGoals.isEmpty()) {
             // If the anomaly detection goals contain goals which are not in the default goals then the CC startup
             // checks will fail, so we make the anomaly goals match the default goals
             configuration.setConfigOption(CRUISE_CONTROL_ANOMALY_DETECTION_CONFIG_KEY, defaultGoalsString);

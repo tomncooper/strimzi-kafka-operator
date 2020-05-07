@@ -2800,9 +2800,9 @@ Used in: xref:type-KafkaMirrorMaker2-{context}[`KafkaMirrorMaker2`]
 [options="header"]
 |====
 |Property       |Description
-|spec    1.2+<.<|The specification of the Kafka Rebalance.
+|spec    1.2+<.<|The specification of the Kafka rebalance.
 |xref:type-KafkaRebalanceSpec-{context}[`KafkaRebalanceSpec`]
-|status  1.2+<.<|The status of the Kafka Rebalance.
+|status  1.2+<.<|The status of the Kafka rebalance.
 |xref:type-KafkaRebalanceStatus-{context}[`KafkaRebalanceStatus`]
 |====
 
@@ -2815,7 +2815,7 @@ Used in: xref:type-KafkaRebalance-{context}[`KafkaRebalance`]
 [options="header"]
 |====
 |Property                  |Description
-|goals              1.2+<.<|A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal.The supported goals are available at https://github.com/linkedin/cruise-control#goals.If an empty goals list is provided, the goals declared in the default.goals Cruise Control configuration parameter are used.
+|goals              1.2+<.<|A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal. The supported goals are available at https://github.com/linkedin/cruise-control#goals. If an empty goals list is provided, the goals declared in the default.goals Cruise Control configuration parameter are used.
 |string array
 |skipHardGoalCheck  1.2+<.<|Whether to allow hard goals to be skipped in rebalance proposal generation. Default is false.
 |boolean
@@ -2834,9 +2834,9 @@ Used in: xref:type-KafkaRebalance-{context}[`KafkaRebalance`]
 |xref:type-Condition-{context}[`Condition`] array
 |observedGeneration  1.2+<.<|The generation of the CRD that was last reconciled by the operator.
 |integer
-|sessionId           1.2+<.<|The session identifier for requests to Cruise Control pertaining to this KafkaRebalance resource.This is used by the Kafka Rebalance operator to track the status of ongoing rebalancing operations.
+|sessionId           1.2+<.<|The session identifier for requests to Cruise Control pertaining to this KafkaRebalance resource. This is used by the Kafka Rebalance operator to track the status of ongoing rebalancing operations.
 |string
-|optimizationResult  1.2+<.<|A JSON describing the optimization result.
+|optimizationResult  1.2+<.<|A JSON object describing the optimization result.
 |map
 |====
 

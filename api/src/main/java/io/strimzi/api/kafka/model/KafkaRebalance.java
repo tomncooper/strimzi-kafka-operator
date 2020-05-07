@@ -111,7 +111,7 @@ public class KafkaRebalance extends CustomResource implements UnknownPropertyPre
         super.setMetadata(metadata);
     }
 
-    @Description("The specification of the Kafka Rebalance.")
+    @Description("The specification of the Kafka rebalance.")
     public KafkaRebalanceSpec getSpec() {
         return spec;
     }
@@ -121,7 +121,7 @@ public class KafkaRebalance extends CustomResource implements UnknownPropertyPre
     }
 
     @Override
-    @Description("The status of the Kafka Rebalance.")
+    @Description("The status of the Kafka rebalance.")
     public KafkaRebalanceStatus getStatus() {
         return status;
     }

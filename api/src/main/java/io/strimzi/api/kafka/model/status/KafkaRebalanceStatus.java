@@ -34,7 +34,7 @@ public class KafkaRebalanceStatus extends Status {
     private String sessionId;
     private Map<String, Object> optimizationResult = new HashMap<>(0);
 
-    @Description("A JSON describing the optimization result")
+    @Description("A JSON object describing the optimization result")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public Map<String, Object> getOptimizationResult() {
         return optimizationResult;
@@ -44,7 +44,7 @@ public class KafkaRebalanceStatus extends Status {
         this.optimizationResult = optimizationResult;
     }
 
-    @Description("The session identifier for requests to Cruise Control pertaining to this KafkaRebalance resource." +
+    @Description("The session identifier for requests to Cruise Control pertaining to this KafkaRebalance resource. " +
             "This is used by the Kafka Rebalance operator to track the status of ongoing rebalancing operations.")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public String getSessionId() {

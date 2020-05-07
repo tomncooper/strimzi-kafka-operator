@@ -77,6 +77,36 @@ import static io.strimzi.operator.cluster.operator.resource.cruisecontrol.Cruise
  *     computation, so that the cluster conditions could be change, he can refresh the proposal annotating
  *     the custom resource with the {@code strimzi.io/rebalance=refresh} annotation.
  * </p>
+ * <pre><code>
+ *   User        Kube           Operator              CC
+ *    | Create KR  |               |                   |
+ *    |-----------→|   Watch       |                   |
+ *    |            |--------------→|   Proposal        |
+ *    |            |               |------------------→|
+ *    |            |               |   Poll            |
+ *    |            |               |------------------→|
+ *    |            |               |   Poll            |
+ *    |            | Update Status |------------------→|
+ *    |            |←--------------|                   |
+ *    |            |   Watch       |                   |
+ *    |            |--------------→|                   |
+ *    | Get        |               |                   |
+ *    |-----------→|               |                   |
+ *    |            |               |                   |
+ *    | Approve    |               |                   |
+ *    |-----------→|  Watch        |                   |
+ *    |            |--------------→|   Rebalance       |
+ *    |            |               |------------------→|
+ *    |            |               |   Poll            |
+ *    |            |               |------------------→|
+ *    |            |               |   Poll            |
+ *    |            | Update Status |------------------→|
+ *    |            |←--------------|                   |
+ *    |            |   Watch       |                   |
+ *    |            |--------------→|                   |
+ *    | Get        |               |                   |
+ *    |-----------→|               |                   |
+ * </code></pre>
  */
 public class KafkaRebalanceAssemblyOperator
         extends AbstractOperator<KafkaRebalance, AbstractWatchableResourceOperator<KubernetesClient, KafkaRebalance, KafkaRebalanceList, DoneableKafkaRebalance, Resource<KafkaRebalance, DoneableKafkaRebalance>>> {
@@ -94,7 +124,7 @@ public class KafkaRebalanceAssemblyOperator
     private final PlatformFeaturesAvailability pfa;
     private final Function<Vertx, CruiseControlApi> cruiseControlClientProvider;
 
-    private String ccHost = null;
+    private final String ccHost;
 
     /**
      * @param vertx The Vertx instance
@@ -179,9 +209,8 @@ public class KafkaRebalanceAssemblyOperator
         }
         StatusDiff diff = new StatusDiff(clusterRebalance.getStatus(), desiredStatus);
         if (!diff.isEmpty()) {
-            KafkaRebalance copy = new KafkaRebalanceBuilder(clusterRebalance).build();
-            copy.setStatus(desiredStatus);
-            return clusterRebalanceOperations.updateStatusAsync(copy);
+            return clusterRebalanceOperations
+                    .updateStatusAsync(new KafkaRebalanceBuilder(clusterRebalance).withStatus(desiredStatus).build());
         }
         return Future.succeededFuture(clusterRebalance);
     }
@@ -512,8 +541,10 @@ public class KafkaRebalanceAssemblyOperator
                 log.debug("{}: No {} annotation set", reconciliation, ANNO_STRIMZI_IO_REBALANCE);
                 return Future.succeededFuture(clusterRebalance.getStatus());
             case approve:
+                log.debug("{}: Annotation {}={}", reconciliation, ANNO_STRIMZI_IO_REBALANCE, RebalanceAnnotation.approve);
                 return requestRebalance(reconciliation, host, apiClient, false, rebalanceOptionsBuilder);
             case refresh:
+                log.debug("{}: Annotation {}={}", reconciliation, ANNO_STRIMZI_IO_REBALANCE, RebalanceAnnotation.refresh);
                 return requestRebalance(reconciliation, host, apiClient, true, rebalanceOptionsBuilder);
             default:
                 log.warn("{}: Ignore annotation {}={}", reconciliation, ANNO_STRIMZI_IO_REBALANCE, rebalanceAnnotation);
@@ -805,10 +836,10 @@ public class KafkaRebalanceAssemblyOperator
     }
 
     /**
-     * Return the {@code RebalanceAnnotation} enum value for the raw String value of the strimzio.io/rebalance annotation
+     * Return the {@code RebalanceAnnotation} enum value for the raw String value of the strimzi.io/rebalance annotation
      * set on the provided KafkaRebalance resource instance.
      * If the annotation is not set it returns {@code RebalanceAnnotation.none} while if it's a not valid value, it
-     * returns {@code RebalanceAnnotation.unknown}
+     * returns {@code RebalanceAnnotation.unknown}.
      *
      * @param clusterRebalance KafkaRebalance resource instance from which getting the value of the strimzio.io/rebalance annotation
      * @return the {@code RebalanceAnnotation} enum value for the raw String value of the strimzio.io/rebalance annotation
