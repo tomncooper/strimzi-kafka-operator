@@ -2817,7 +2817,7 @@ Used in: xref:type-KafkaRebalance-{context}[`KafkaRebalance`]
 |Property                  |Description
 |goals              1.2+<.<|A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal. The supported goals are available at https://github.com/linkedin/cruise-control#goals. If an empty goals list is provided, the goals declared in the default.goals Cruise Control configuration parameter are used.
 |string array
-|skipHardGoalCheck  1.2+<.<|Whether to allow hard goals to be skipped in rebalance proposal generation. Default is false.
+|skipHardGoalCheck  1.2+<.<|Whether to allow the hard goals specified in the Kafka CR to be skipped in rebalance proposal generation. This can be useful when some of those hard goals are preventing a balance solution being found. Default is false.
 |boolean
 |====
 

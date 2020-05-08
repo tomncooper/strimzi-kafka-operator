@@ -43,7 +43,9 @@ public class KafkaRebalanceSpec implements UnknownPropertyPreserving, Serializab
         this.goals = goals;
     }
 
-    @Description("Whether to allow hard goals to be skipped in rebalance proposal generation. Default is false.")
+    @Description("Whether to allow the hard goals specified in the Kafka CR to be skipped in rebalance proposal generation. " +
+            "This can be useful when some of those hard goals are preventing a balance solution being found. " +
+            "Default is false.")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public boolean isSkipHardGoalCheck() {
         return skipHardGoalCheck;
