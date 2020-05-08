@@ -4,8 +4,6 @@
  */
 package io.strimzi.operator.cluster.operator.assembly;
 
-import io.fabric8.kubernetes.api.model.ObjectMeta;
-import io.fabric8.kubernetes.api.model.ObjectMetaBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.strimzi.api.kafka.KafkaRebalanceList;
 import io.strimzi.api.kafka.model.DoneableKafkaRebalance;
@@ -44,9 +42,8 @@ import org.mockserver.integration.ClientAndServer;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,8 +53,9 @@ import static org.mockito.Mockito.when;
 public class KafkaRebalanceStateMachineTest {
 
     private static final String HOST = "localhost";
+    private static final String RESOURCE_NAME = "my-rebalance";
     private static final String CLUSTER_NAMESPACE = "cruise-control-namespace";
-    private static final String CLUSTER_NAME = "cruise-control-test-cluster";
+    private static final String CLUSTER_NAME = "kafka-cruise-control-test-cluster";
 
     private final KubernetesVersion kubernetesVersion = KubernetesVersion.V1_11;
 
@@ -111,45 +109,35 @@ public class KafkaRebalanceStateMachineTest {
      * @param currentStatusSessionID The user task ID attached to the current KafkaRebalance resource. Can be null.
      * @param userAnnotation An annotation to be applied after the reconcile has started, for example "approve" or "stop".
      * @param rebalanceSpec A custom rebalance specification. If null a blank spec will be used.
-     * @return A builder instance configured with the supplied parameters.
+     * @return A KafkaRebalance instance configured with the supplied parameters.
      */
-    private KafkaRebalanceBuilder createKafkaRebalance(KafkaRebalanceAssemblyOperator.State currentState,
-                                                       String currentStatusSessionID,
-                                                       String userAnnotation,
-                                                       KafkaRebalanceSpec rebalanceSpec) {
+    private KafkaRebalance createKafkaRebalance(KafkaRebalanceAssemblyOperator.State currentState,
+                                                String currentStatusSessionID,
+                                                String userAnnotation,
+                                                KafkaRebalanceSpec rebalanceSpec) {
 
-        Map<String, String> labels = new HashMap<>();
-        labels.put(Labels.STRIMZI_CLUSTER_LABEL, "my-test-cluster");
-        Map<String, String> annotations = new HashMap<>();
-        annotations.put(KafkaRebalanceAssemblyOperator.ANNO_STRIMZI_IO_REBALANCE, userAnnotation == null ? "none" : userAnnotation);
+        KafkaRebalanceBuilder kafkaRebalanceBuilder =
+                new KafkaRebalanceBuilder()
+                        .editOrNewMetadata()
+                            .withName(RESOURCE_NAME)
+                            .withNamespace(CLUSTER_NAMESPACE)
+                            .withLabels(Collections.singletonMap(Labels.STRIMZI_CLUSTER_LABEL, CLUSTER_NAME))
+                            .withAnnotations(Collections.singletonMap(KafkaRebalanceAssemblyOperator.ANNO_STRIMZI_IO_REBALANCE, userAnnotation == null ? "none" : userAnnotation))
+                        .endMetadata()
+                        .withSpec(rebalanceSpec);
 
-        ObjectMeta meta = new ObjectMetaBuilder()
-                .withLabels(labels)
-                .withName(CLUSTER_NAME)
-                .withNamespace(CLUSTER_NAMESPACE)
-                .withAnnotations(annotations)
-                .build();
+        // there is no actual status and related condition when a KafkaRebalance is just created
+        if (currentState != KafkaRebalanceAssemblyOperator.State.New) {
+            Condition currentRebalanceCondition = new Condition();
+            currentRebalanceCondition.setType(currentState.toString());
 
-        if (rebalanceSpec == null) {
-            rebalanceSpec = new KafkaRebalanceSpecBuilder().build();
-        }
-
-        List<Condition> currentRebalanceConditions = new ArrayList<>();
-        Condition currentRebalanceCondition = new Condition();
-        currentRebalanceCondition.setType(currentState.toString());
-        currentRebalanceConditions.add(currentRebalanceCondition);
-
-        KafkaRebalanceStatus currentStatus = new KafkaRebalanceStatus();
-        currentStatus.setConditions(currentRebalanceConditions);
-
-        if (currentStatusSessionID != null) {
+            KafkaRebalanceStatus currentStatus = new KafkaRebalanceStatus();
+            currentStatus.setConditions(Collections.singletonList(currentRebalanceCondition));
             currentStatus.setSessionId(currentStatusSessionID);
-        }
 
-        return new KafkaRebalanceBuilder()
-                .withMetadata(meta)
-                .withSpec(rebalanceSpec)
-                .withStatus(currentStatus);
+            kafkaRebalanceBuilder.withStatus(currentStatus);
+        }
+        return kafkaRebalanceBuilder.build();
     }
 
     /**
@@ -174,16 +162,18 @@ public class KafkaRebalanceStateMachineTest {
         PlatformFeaturesAvailability pfa = new PlatformFeaturesAvailability(true, kubernetesVersion);
         KafkaRebalanceAssemblyOperator kcrao = new KafkaRebalanceAssemblyOperator(vertx, pfa, supplier, HOST);
 
-        Reconciliation recon = new Reconciliation("test-trigger", KafkaRebalance.RESOURCE_KIND, CLUSTER_NAMESPACE, CLUSTER_NAME);
+        Reconciliation recon = new Reconciliation("test-trigger", KafkaRebalance.RESOURCE_KIND, CLUSTER_NAMESPACE, RESOURCE_NAME);
 
         RebalanceOptions.RebalanceOptionsBuilder rbOptions = new RebalanceOptions.RebalanceOptionsBuilder();
 
-        if (kcRebalance.getSpec().getGoals() != null) {
-            rbOptions.withGoals(kcRebalance.getSpec().getGoals());
-        }
+        if (kcRebalance.getSpec() != null) {
+            if (kcRebalance.getSpec().getGoals() != null) {
+                rbOptions.withGoals(kcRebalance.getSpec().getGoals());
+            }
 
-        if (kcRebalance.getSpec().isSkipHardGoalCheck()) {
-            rbOptions.withSkipHardGoalCheck();
+            if (kcRebalance.getSpec().isSkipHardGoalCheck()) {
+                rbOptions.withSkipHardGoalCheck();
+            }
         }
 
         CrdOperator<KubernetesClient,
@@ -191,8 +181,8 @@ public class KafkaRebalanceStateMachineTest {
                 KafkaRebalanceList,
                 DoneableKafkaRebalance> mockRebalanceOps = supplier.kafkaRebalanceOperator;
 
-        when(mockRebalanceOps.get(CLUSTER_NAMESPACE, CLUSTER_NAME)).thenReturn(kcRebalance);
-        when(mockRebalanceOps.getAsync(CLUSTER_NAMESPACE, CLUSTER_NAME)).thenReturn(Future.succeededFuture(kcRebalance));
+        when(mockRebalanceOps.get(CLUSTER_NAMESPACE, RESOURCE_NAME)).thenReturn(kcRebalance);
+        when(mockRebalanceOps.getAsync(CLUSTER_NAMESPACE, RESOURCE_NAME)).thenReturn(Future.succeededFuture(kcRebalance));
 
         return kcrao.computeNextStatus(
                 recon, HOST, client, kcRebalance, currentState, initialAnnotation, rbOptions).compose(result -> {
@@ -221,7 +211,7 @@ public class KafkaRebalanceStateMachineTest {
                                                          KafkaRebalanceAssemblyOperator.RebalanceAnnotation initialAnnotation,
                                                          String userAnnotation, String currentStatusSessionID) {
 
-        KafkaRebalance kcRebalance = createKafkaRebalance(currentState, currentStatusSessionID, userAnnotation, null).build();
+        KafkaRebalance kcRebalance = createKafkaRebalance(currentState, currentStatusSessionID, userAnnotation, null);
 
         return checkTransition(vertx, context, currentState, nextState, initialAnnotation, kcRebalance);
 
@@ -298,7 +288,7 @@ public class KafkaRebalanceStateMachineTest {
         KafkaRebalanceSpec rebalanceSpec = new KafkaRebalanceSpecBuilder().addAllToGoals(customGoals).build();
 
         KafkaRebalance kcRebalance = createKafkaRebalance(
-                KafkaRebalanceAssemblyOperator.State.New, null, null, rebalanceSpec).build();
+                KafkaRebalanceAssemblyOperator.State.New, null, null, rebalanceSpec);
 
         checkTransition(vertx, context,
                 KafkaRebalanceAssemblyOperator.State.New, KafkaRebalanceAssemblyOperator.State.NotReady,
@@ -331,7 +321,7 @@ public class KafkaRebalanceStateMachineTest {
         KafkaRebalanceSpec rebalanceSpec = new KafkaRebalanceSpecBuilder().addAllToGoals(customGoals).withSkipHardGoalCheck(true).build();
 
         KafkaRebalance kcRebalance = createKafkaRebalance(
-                KafkaRebalanceAssemblyOperator.State.New, null, null, rebalanceSpec).build();
+                KafkaRebalanceAssemblyOperator.State.New, null, null, rebalanceSpec);
 
         checkTransition(vertx, context,
                 KafkaRebalanceAssemblyOperator.State.New, KafkaRebalanceAssemblyOperator.State.ProposalReady,
