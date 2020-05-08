@@ -733,7 +733,7 @@ public class KafkaRebalanceAssemblyOperator
         }
     }
 
-    private Future<Void> reconcileRebalance(Reconciliation reconciliation, KafkaRebalance kafkaRebalance) {
+    /* test */ Future<Void> reconcileRebalance(Reconciliation reconciliation, KafkaRebalance kafkaRebalance) {
         if (kafkaRebalance == null) {
             log.info("{}: Rebalance resource deleted", reconciliation);
             return Future.succeededFuture();
