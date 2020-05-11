@@ -69,6 +69,23 @@ public class CruiseControl extends AbstractModel {
 
     public static final String CRUISE_CONTROL_METRIC_REPORTER = "com.linkedin.kafka.cruisecontrol.metricsreporter.CruiseControlMetricsReporter";
 
+    public static final String RACK_AWARENESS_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.RackAwareGoal";
+    public static final String REPLICA_CAPACITY_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.ReplicaCapacityGoal";
+    public static final String DISK_CAPACITY_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.DiskCapacityGoal";
+    public static final String NETWORK_INBOUND_CAPACITY_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.NetworkInboundCapacityGoal";
+    public static final String NETWORK_OUTBOUND_CAPACITY_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.NetworkOutboundCapacityGoal";
+    public static final String CPU_CAPACITY_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.CpuCapacityGoal";
+    public static final String REPLICA_DISTRIBUTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.ReplicaDistributionGoal";
+    public static final String POTENTIAL_NETWORK_OUTAGE_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.PotentialNwOutGoal";
+    public static final String DISK_USAGE_DISTRIBUTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.DiskUsageDistributionGoal";
+    public static final String NETWORK_INBOUND_USAGE_DISTRIBUTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.NetworkInboundUsageDistributionGoal";
+    public static final String NETWORK_OUTBOUND_USAGE_DISTRIBUTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.NetworkOutboundUsageDistributionGoal";
+    public static final String CPU_USAGE_DISTRIBUTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.CpuUsageDistributionGoal";
+    public static final String TOPIC_REPLICA_DISTRIBUTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.TopicReplicaDistributionGoal";
+    public static final String LEADER_REPLICA_DISTRIBUTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.LeaderReplicaDistributionGoal";
+    public static final String LEADER_BYTES_IN_DISTRIBUTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.LeaderBytesInDistributionGoal";
+    public static final String PREFERRED_LEADER_ELECTION_GOAL = "com.linkedin.kafka.cruisecontrol.analyzer.goals.PreferredLeaderElectionGoal";
+
     protected static final String CRUISE_CONTROL_CONTAINER_NAME = "cruise-control";
     protected static final String TLS_SIDECAR_NAME = "tls-sidecar";
     protected static final String TLS_SIDECAR_CC_CERTS_VOLUME_NAME = "cc-certs";

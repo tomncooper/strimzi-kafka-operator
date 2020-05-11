@@ -53,11 +53,12 @@ public class CruiseControlClientTest {
 
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
 
+        Checkpoint checkpoint = context.checkpoint(1);
         client.getCruiseControlState(HOST, PORT, false).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(
                     result.getJson().getJsonObject("ExecutorState").getString("state"),
                     is("NO_TASK_IN_PROGRESS")));
-            context.completeNow();
+            checkpoint.flag();
         }));
     }
 
@@ -70,14 +71,11 @@ public class CruiseControlClientTest {
 
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
 
-        Checkpoint checkpoint = context.checkpoint(4);
+        Checkpoint checkpoint = context.checkpoint(1);
         client.rebalance(HOST, PORT, rbOptions, null).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(result.getUserTaskId(), is(MockCruiseControl.REBALANCE_NO_GOALS_RESPONSE_UTID)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().containsKey("summary"), is(true)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().containsKey("goalSummary"), is(true)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().containsKey("loadAfterOptimization"), is(true)));
             checkpoint.flag();
         }));
@@ -92,18 +90,13 @@ public class CruiseControlClientTest {
 
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
 
-        Checkpoint checkpoint = context.checkpoint(6);
+        Checkpoint checkpoint = context.checkpoint(1);
         client.rebalance(HOST, PORT, rbOptions, null).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(result.getUserTaskId(), is(MockCruiseControl.REBALANCE_NO_GOALS_VERBOSE_RESPONSE_UTID)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().containsKey("summary"), is(true)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().containsKey("goalSummary"), is(true)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().containsKey("proposals"), is(true)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().containsKey("loadAfterOptimization"), is(true)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().containsKey("loadBeforeOptimization"), is(true)));
             checkpoint.flag();
         }));
@@ -118,15 +111,12 @@ public class CruiseControlClientTest {
 
         CruiseControlApiImpl client = new CruiseControlApiImpl(vertx);
 
+        Checkpoint checkpoint = context.checkpoint(1);
         client.rebalance(HOST, PORT, rbOptions, MockCruiseControl.REBALANCE_NOT_ENOUGH_VALID_WINDOWS_ERROR)
-                .setHandler(result -> {
-                    if (result.succeeded()) {
-                        assertThat(result.result().thereIsNotEnoughDataForProposal(), is(true));
-                        context.completeNow();
-                    } else {
-                        context.failNow(result.cause());
-                    }
-                });
+                .setHandler(context.succeeding(result -> {
+                    assertThat(result.thereIsNotEnoughDataForProposal(), is(true));
+                    checkpoint.flag();
+                }));
     }
 
     @Test
@@ -137,10 +127,9 @@ public class CruiseControlClientTest {
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
         String userTaskID = MockCruiseControl.REBALANCE_NO_GOALS_RESPONSE_UTID;
 
-        Checkpoint checkpoint = context.checkpoint(2);
+        Checkpoint checkpoint = context.checkpoint(1);
         client.getUserTaskStatus(HOST, PORT, userTaskID).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(result.getUserTaskId(), is(MockCruiseControl.USER_TASK_REBALANCE_NO_GOALS_RESPONSE_UTID)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().getJsonObject(CC_REST_API_SUMMARY), is(notNullValue())));
             checkpoint.flag();
         }));
@@ -154,10 +143,9 @@ public class CruiseControlClientTest {
         CruiseControlApi client = new CruiseControlApiImpl(vertx);
         String userTaskID = MockCruiseControl.REBALANCE_NO_GOALS_VERBOSE_RESPONSE_UTID;
 
-        Checkpoint checkpoint = context.checkpoint(2);
+        Checkpoint checkpoint = context.checkpoint(1);
         client.getUserTaskStatus(HOST, PORT, userTaskID).setHandler(context.succeeding(result -> {
             context.verify(() -> assertThat(result.getUserTaskId(), is(MockCruiseControl.USER_TASK_REBALANCE_NO_GOALS_VERBOSE_RESPONSE_UTID)));
-            checkpoint.flag();
             context.verify(() -> assertThat(result.getJson().getJsonObject(CC_REST_API_SUMMARY), is(notNullValue())));
             checkpoint.flag();
         }));
